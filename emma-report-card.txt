@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: Emma Wilson
+Student ID: STU004
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      A+ (99%)    Mr. Smith      Outstanding mathematical genius
+Science          A+ (98%)    Dr. Brown      Exceptional scientific mind
+English          A+ (97%)    Ms. Johnson    Brilliant writing and analysis
+History          A+ (100%)   Mr. Davis      Perfect historical knowledge
+Art              A+ (96%)    Ms. Wilson     Incredibly creative talent
+Physical Ed      A+ (99%)    Coach Miller   Athletic excellence
+
+Overall Grade: A+ (98%)
+Class Rank: 1/30
+Attendance: 100%
+
+Teacher Comments:
+Emma is an extraordinary student who excels in every subject. Her dedication and natural talent make her a role model for other students.

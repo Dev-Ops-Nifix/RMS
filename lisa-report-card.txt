@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: Lisa Taylor
+Student ID: STU006
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      A- (90%)    Mr. Smith      Strong analytical skills
+Science          B+ (86%)    Dr. Brown      Good laboratory techniques
+English          A (93%)     Ms. Johnson    Excellent communication skills
+History          B+ (88%)    Mr. Davis      Good grasp of historical events
+Art              A- (91%)    Ms. Wilson     Shows great artistic flair
+Physical Ed      B+ (87%)    Coach Miller   Good team player
+
+Overall Grade: A- (89%)
+Class Rank: 5/30
+Attendance: 96%
+
+Teacher Comments:
+Lisa is a well-rounded student with strong performance across most subjects. With continued effort, she can achieve even better results.

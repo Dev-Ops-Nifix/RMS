@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: Carol Davis
+Student ID: STU003
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      B- (75%)    Mr. Smith      Needs more practice
+Science          B (80%)     Dr. Brown      Average performance
+English          B- (76%)    Ms. Johnson    Can improve with effort
+History          B (82%)     Mr. Davis      Fair understanding
+Art              C+ (78%)    Ms. Wilson     Needs more creativity
+Physical Ed      B (77%)     Coach Miller   Adequate participation
+
+Overall Grade: B- (78%)
+Class Rank: 18/30
+Attendance: 92%
+
+Teacher Comments:
+Carol has potential but needs to put in more effort. Regular study and practice will help improve her grades significantly.

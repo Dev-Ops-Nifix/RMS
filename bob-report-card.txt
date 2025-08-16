@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: Bob Smith
+Student ID: STU002
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      B+ (87%)    Mr. Smith      Good progress in algebra
+Science          A- (92%)    Dr. Brown      Solid understanding of concepts
+English          B+ (85%)    Ms. Johnson    Improving writing skills
+History          A- (90%)    Mr. Davis      Good historical knowledge
+Art              B (83%)     Ms. Wilson     Shows artistic potential
+Physical Ed      A (91%)     Coach Miller   Excellent teamwork
+
+Overall Grade: A- (88%)
+Class Rank: 8/30
+Attendance: 95%
+
+Teacher Comments:
+Bob is a dedicated student who shows consistent improvement. With continued effort, he can achieve even better results.

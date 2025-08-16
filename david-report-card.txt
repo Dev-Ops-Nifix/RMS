@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: David Brown
+Student ID: STU005
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      C+ (68%)    Mr. Smith      Struggles with complex problems
+Science          C (65%)     Dr. Brown      Needs more lab practice
+English          C- (62%)    Ms. Johnson    Writing needs improvement
+History          C (70%)     Mr. Davis      Basic understanding only
+Art              D+ (58%)    Ms. Wilson     Limited artistic skills
+Physical Ed      C+ (67%)    Coach Miller   Average physical performance
+
+Overall Grade: C (65%)
+Class Rank: 25/30
+Attendance: 88%
+
+Teacher Comments:
+David needs significant improvement across all subjects. Regular study sessions and extra help would benefit his academic progress.

@@ -1,0 +1,982 @@
+{
+  "info": {
+    "name": "EDU VAULT Complete Test Suite",
+    "description": "Complete test cases for all EDU VAULT functionality"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "teacherToken",
+      "value": ""
+    },
+    {
+      "key": "parentToken",
+      "value": ""
+    },
+    {
+      "key": "adminId",
+      "value": ""
+    },
+    {
+      "key": "teacherId",
+      "value": ""
+    },
+    {
+      "key": "parentId",
+      "value": ""
+    },
+    {
+      "key": "studentId",
+      "value": ""
+    },
+    {
+      "key": "reportCardId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication Tests",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@test.com\",\n  \"password\": \"password123\",\n  \"role\": \"Admin\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin registration successful', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.expect(pm.response.json().role).to.equal('Admin');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Register Teacher",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Teacher User\",\n  \"email\": \"teacher@test.com\",\n  \"password\": \"password123\",\n  \"role\": \"Teacher\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          }
+        },
+        {
+          "name": "Register Parent",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Parent User\",\n  \"email\": \"parent@test.com\",\n  \"password\": \"password123\",\n  \"role\": \"Parent\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin login successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "    pm.globals.set('adminToken', pm.response.json().token);",
+                  "    pm.globals.set('adminId', pm.response.json().user.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Teacher",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teacher@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.globals.set('teacherToken', pm.response.json().token);",
+                  "pm.globals.set('teacherId', pm.response.json().user.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Parent",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"parent@test.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "header": [{"key": "Content-Type", "value": "application/json"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.globals.set('parentToken', pm.response.json().token);",
+                  "pm.globals.set('parentId', pm.response.json().user.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Admin Teacher Management",
+      "item": [
+        {
+          "name": "Create Teacher (Admin)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin/teachers",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{adminToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Teacher\",\n  \"email\": \"newteacher@test.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher created successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.expect(pm.response.json().role).to.equal('Teacher');",
+                  "    pm.globals.set('newTeacherId', pm.response.json().id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Teachers (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/teachers",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get all teachers successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Single Teacher (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/teachers/{{teacherId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get teacher details successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().name).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Teacher (Admin)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/admin/teachers/{{newTeacherId}}",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{adminToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Teacher Name\",\n  \"email\": \"updatedteacher@test.com\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher updated successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().name).to.equal('Updated Teacher Name');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Teacher (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/admin/teachers/{{newTeacherId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher deleted successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().message).to.include('deleted');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Student Management",
+      "item": [
+        {
+          "name": "Create Student (Teacher)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/teachers/students",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{teacherToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU001\",\n  \"name\": \"Test Student\",\n  \"class\": \"5A\",\n  \"section\": \"A\",\n  \"parentId\": \"{{parentId}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Student created successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.globals.set('studentId', pm.response.json()._id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Students (Teacher)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/teachers/students",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get teacher students successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Students (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/students",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin gets all students', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Student Details (Teacher)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/teachers/students/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get student details successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().studentName).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Student (Teacher)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/teachers/students/{{studentId}}",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{teacherToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Student Name\",\n  \"class\": \"5B\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Student updated successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Report Card Management",
+      "item": [
+        {
+          "name": "Upload Report Card (Teacher)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/report-cards/upload",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "studentId", "value": "{{studentId}}"},
+                {"key": "period", "value": "Q1 2024"},
+                {"key": "academicYear", "value": "2023-2024"},
+                {"key": "file", "type": "file", "src": "sample-report-card.pdf"}
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Report card uploaded successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.globals.set('reportCardId', pm.response.json().data._id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Report Card (Teacher)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/report-cards/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Get report card successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().studentId).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Report Cards (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/report-cards/admin/all",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin gets all report cards', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Report Cards by Class (Admin)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/report-cards/admin/class/5A",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin gets class report cards', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Performance (Teacher)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/report-cards/{{reportCardId}}/performance",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{teacherToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"performance\": [\n    {\n      \"subject\": \"Mathematics\",\n      \"grade\": \"A (95%)\",\n      \"teacher\": \"Mr. Smith\",\n      \"comments\": \"Excellent work\"\n    }\n  ],\n  \"teacherComments\": \"Great improvement this quarter\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Performance updated successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Class Leaderboard (Teacher)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/report-cards/leaderboard/5A",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Leaderboard retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().leaderboard).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Messaging System",
+      "item": [
+        {
+          "name": "Teacher Send Message to Parent",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/send",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{teacherToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"content\": \"Your child is doing well in class\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher message sent successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Parent Send Message to Teacher",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/messages/parent-message",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{parentToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"studentId\": \"{{studentId}}\",\n  \"content\": \"Thank you for the update\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Parent message sent successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/messages/chat/{{teacherId}}/{{parentId}}/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Chat history retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Teacher Chats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/messages/teacher-chats",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher chats retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Parent Chats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/messages/parent-chats",
+            "header": [{"key": "Authorization", "value": "Bearer {{parentToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Parent chats retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Admin-Teacher Chat",
+      "item": [
+        {
+          "name": "Admin Send Message to Teacher",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin-teacher-chat/admin/send",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{adminToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"content\": \"Please review the new curriculum guidelines\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin message sent to teacher', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.expect(pm.response.json().sender).to.equal('admin');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Teacher Send Message to Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/admin-teacher-chat/teacher/send",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{teacherToken}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"adminId\": \"{{adminId}}\",\n  \"content\": \"I have reviewed the guidelines and have some questions\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher message sent to admin', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    pm.expect(pm.response.json().sender).to.equal('teacher');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Admin-Teacher Chat History",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin-teacher-chat/history/{{adminId}}/{{teacherId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Chat history retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Admin Chats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin-teacher-chat/admin/chats",
+            "header": [{"key": "Authorization", "value": "Bearer {{adminToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admin chats retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Teacher Admin Chats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin-teacher-chat/teacher/chats",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher admin chats retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Admins List (Teacher)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin-teacher-chat/admins",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Admins list retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "7. Parent Operations",
+      "item": [
+        {
+          "name": "Get Parent Children",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/parents/children",
+            "header": [{"key": "Authorization", "value": "Bearer {{parentToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Parent children retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Child Performance",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/parents/performance/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{parentToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Child performance retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Class Leaderboard (Parent)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/parents/leaderboard/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{parentToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Class leaderboard retrieved', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8. Access Control Tests",
+      "item": [
+        {
+          "name": "Teacher Cannot Access Admin Endpoints",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/admin/teachers",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Teacher denied admin access', function() {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Parent Cannot Access Teacher Endpoints",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/teachers/students",
+            "header": [{"key": "Authorization", "value": "Bearer {{parentToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Parent denied teacher access', function() {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unauthorized Access Denied",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/students"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized access denied', function() {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "9. Cleanup",
+      "item": [
+        {
+          "name": "Delete Student (Teacher)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/teachers/students/{{studentId}}",
+            "header": [{"key": "Authorization", "value": "Bearer {{teacherToken}}"}]
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Student deleted successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

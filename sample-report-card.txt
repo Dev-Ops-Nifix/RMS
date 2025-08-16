@@ -1,0 +1,23 @@
+Student Report Card
+
+Student Name: Noah Smith
+Class: Grade 5A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject                Grade    Teacher           Comments
+Mathematics           B+ (87%)  Mr. Smith         Good progress, needs improvement in algebra
+Science               A (95%)   Dr. Brown         Excellent understanding of concepts
+English               A- (92%)  Ms. Johnson       Strong writing skills, improve grammar
+History               A (96%)   Mr. Davis         Exceptional knowledge and participation
+Art                   A+ (98%)  Ms. Wilson        Creative and talented artist
+Physical Education    A (94%)   Coach Miller      Great teamwork and physical abilities
+
+Overall Performance:
+- Attendance: 95%
+- Behavior: Excellent
+- Class Rank: 5/30
+
+Teacher Comments:
+Noah has shown excellent progress during the first quarter. He is an attentive student who participates actively in class discussions. His strengths include critical thinking and problem-solving. Areas for improvement include algebra in mathematics and grammar in English. Overall, Noah is a dedicated student with great potential.

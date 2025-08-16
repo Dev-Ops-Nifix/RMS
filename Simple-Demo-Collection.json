@@ -1,0 +1,110 @@
+{
+  "info": {
+    "name": "EDU VAULT Simple Demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "teacherToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Register Teacher",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "console.log('Teacher registered');"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"teacher@demo.com\",\"password\":\"demo123\",\"role\":\"Teacher\",\"name\":\"Demo Teacher\"}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register"
+        }
+      }
+    },
+    {
+      "name": "2. Login Teacher",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const response = pm.response.json();",
+              "  pm.collectionVariables.set('teacherToken', response.token);",
+              "  console.log('Teacher login successful');",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"teacher@demo.com\",\"password\":\"demo123\",\"role\":\"Teacher\"}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login"
+        }
+      }
+    },
+    {
+      "name": "3. Get Students",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/teachers/students"
+        }
+      }
+    },
+    {
+      "name": "4. Get Leaderboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/report-cards/leaderboard/10"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,842 @@
+{
+  "info": {
+    "name": "EDU VAULT - Complete Backend Demo",
+    "description": "Complete test scenarios for EDU VAULT school management system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "teacherToken",
+      "value": ""
+    },
+    {
+      "key": "parentToken",
+      "value": ""
+    },
+    {
+      "key": "studentId1",
+      "value": ""
+    },
+    {
+      "key": "studentId2",
+      "value": ""
+    },
+    {
+      "key": "studentId3",
+      "value": ""
+    },
+    {
+      "key": "parentId1",
+      "value": ""
+    },
+    {
+      "key": "parentId2",
+      "value": ""
+    },
+    {
+      "key": "parentId3",
+      "value": ""
+    },
+    {
+      "key": "reportCardId1",
+      "value": ""
+    },
+    {
+      "key": "reportCardId2",
+      "value": ""
+    },
+    {
+      "key": "reportCardId3",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. AUTHENTICATION MODULE",
+      "item": [
+        {
+          "name": "1.1 Register Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    console.log('✅ Teacher registered successfully');",
+                  "} else {",
+                  "    console.log('❌ Teacher registration failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teacher@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Teacher\",\n  \"name\": \"Demo Teacher\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.2 Login Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('teacherToken', response.token);",
+                  "    console.log('✅ Teacher login successful');",
+                  "} else {",
+                  "    console.log('❌ Teacher login failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teacher@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Teacher\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Register Parent 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('parentId1', response.user._id);",
+                  "    console.log('✅ Parent 1 registered successfully');",
+                  "} else {",
+                  "    console.log('❌ Parent 1 registration failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice.parent@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Parent\",\n  \"name\": \"John Johnson\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Register Parent 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('parentId2', response.user._id);",
+                  "    console.log('✅ Parent 2 registered successfully');",
+                  "} else {",
+                  "    console.log('❌ Parent 2 registration failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"bob.parent@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Parent\",\n  \"name\": \"Mary Smith\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "1.5 Register Parent 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('parentId3', response.user._id);",
+                  "    console.log('✅ Parent 3 registered successfully');",
+                  "} else {",
+                  "    console.log('❌ Parent 3 registration failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"carol.parent@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Parent\",\n  \"name\": \"David Davis\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. STUDENT MANAGEMENT MODULE",
+      "item": [
+        {
+          "name": "2.1 Add Student - Alice (Top Performer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('studentId1', response._id);",
+                  "    console.log('✅ Alice added successfully');",
+                  "} else {",
+                  "    console.log('❌ Failed to add Alice');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU001\",\n  \"name\": \"Alice Johnson\",\n  \"class\": \"10\",\n  \"section\": \"A\",\n  \"parentId\": \"{{parentId1}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "students"]
+            }
+          }
+        },
+        {
+          "name": "2.2 Add Student - Bob (Good Performer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('studentId2', response._id);",
+                  "    console.log('✅ Bob added successfully');",
+                  "} else {",
+                  "    console.log('❌ Failed to add Bob');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU002\",\n  \"name\": \"Bob Smith\",\n  \"class\": \"10\",\n  \"section\": \"A\",\n  \"parentId\": \"{{parentId2}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "students"]
+            }
+          }
+        },
+        {
+          "name": "2.3 Add Student - Carol (Average Performer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('studentId3', response._id);",
+                  "    console.log('✅ Carol added successfully');",
+                  "} else {",
+                  "    console.log('❌ Failed to add Carol');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"STU003\",\n  \"name\": \"Carol Davis\",\n  \"class\": \"10\",\n  \"section\": \"A\",\n  \"parentId\": \"{{parentId3}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "students"]
+            }
+          }
+        },
+        {
+          "name": "2.4 Get All Students",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const students = pm.response.json();",
+                  "    console.log(`✅ Retrieved ${students.length} students`);",
+                  "} else {",
+                  "    console.log('❌ Failed to get students');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/teachers/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "teachers", "students"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. REPORT CARD MODULE",
+      "item": [
+        {
+          "name": "3.1 Upload Alice's Report Card",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('reportCardId1', response.data._id);",
+                  "    console.log('✅ Alice report card uploaded');",
+                  "} else {",
+                  "    console.log('❌ Failed to upload Alice report card');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "studentId",
+                  "value": "{{studentId1}}",
+                  "type": "text"
+                },
+                {
+                  "key": "period",
+                  "value": "Q1 (Sep - Nov)",
+                  "type": "text"
+                },
+                {
+                  "key": "academicYear",
+                  "value": "2023-2024",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "src": "alice-report-card.pdf",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "upload"]
+            }
+          }
+        },
+        {
+          "name": "3.2 Update Alice's Performance (96% avg)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('✅ Alice performance updated - Should show A+ (96%)');",
+                  "} else {",
+                  "    console.log('❌ Failed to update Alice performance');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"performance\": [\n    {\"subject\": \"Mathematics\", \"grade\": \"A+ (98%)\", \"teacher\": \"Mr. Smith\", \"comments\": \"Excellent mathematical skills\"},\n    {\"subject\": \"Science\", \"grade\": \"A+ (97%)\", \"teacher\": \"Dr. Brown\", \"comments\": \"Outstanding lab work\"},\n    {\"subject\": \"English\", \"grade\": \"A (95%)\", \"teacher\": \"Ms. Johnson\", \"comments\": \"Strong writing abilities\"},\n    {\"subject\": \"History\", \"grade\": \"A+ (99%)\", \"teacher\": \"Mr. Davis\", \"comments\": \"Exceptional knowledge\"},\n    {\"subject\": \"Art\", \"grade\": \"A (93%)\", \"teacher\": \"Ms. Wilson\", \"comments\": \"Very creative work\"},\n    {\"subject\": \"Physical Ed\", \"grade\": \"A+ (98%)\", \"teacher\": \"Coach Miller\", \"comments\": \"Great athletic performance\"}\n  ],\n  \"teacherComments\": \"Alice is an exceptional student who consistently demonstrates excellence across all subjects.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/{{reportCardId1}}/performance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "{{reportCardId1}}", "performance"]
+            }
+          }
+        },
+        {
+          "name": "3.3 Upload Bob's Report Card",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('reportCardId2', response.data._id);",
+                  "    console.log('✅ Bob report card uploaded');",
+                  "} else {",
+                  "    console.log('❌ Failed to upload Bob report card');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "studentId",
+                  "value": "{{studentId2}}",
+                  "type": "text"
+                },
+                {
+                  "key": "period",
+                  "value": "Q1 (Sep - Nov)",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "src": "bob-report-card.pdf",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "upload"]
+            }
+          }
+        },
+        {
+          "name": "3.4 Update Bob's Performance (88% avg)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('✅ Bob performance updated - Should show A- (88%)');",
+                  "} else {",
+                  "    console.log('❌ Failed to update Bob performance');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"performance\": [\n    {\"subject\": \"Mathematics\", \"grade\": \"B+ (87%)\", \"teacher\": \"Mr. Smith\", \"comments\": \"Good progress in algebra\"},\n    {\"subject\": \"Science\", \"grade\": \"A- (92%)\", \"teacher\": \"Dr. Brown\", \"comments\": \"Solid understanding of concepts\"},\n    {\"subject\": \"English\", \"grade\": \"B+ (85%)\", \"teacher\": \"Ms. Johnson\", \"comments\": \"Improving writing skills\"},\n    {\"subject\": \"History\", \"grade\": \"A- (90%)\", \"teacher\": \"Mr. Davis\", \"comments\": \"Good historical knowledge\"},\n    {\"subject\": \"Art\", \"grade\": \"B (83%)\", \"teacher\": \"Ms. Wilson\", \"comments\": \"Shows artistic potential\"},\n    {\"subject\": \"Physical Ed\", \"grade\": \"A (91%)\", \"teacher\": \"Coach Miller\", \"comments\": \"Excellent teamwork\"}\n  ],\n  \"teacherComments\": \"Bob is a dedicated student who shows consistent improvement.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/{{reportCardId2}}/performance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "{{reportCardId2}}", "performance"]
+            }
+          }
+        },
+        {
+          "name": "3.5 Upload Carol's Report Card",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('reportCardId3', response.data._id);",
+                  "    console.log('✅ Carol report card uploaded');",
+                  "} else {",
+                  "    console.log('❌ Failed to upload Carol report card');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "studentId",
+                  "value": "{{studentId3}}",
+                  "type": "text"
+                },
+                {
+                  "key": "period",
+                  "value": "Q1 (Sep - Nov)",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "src": "carol-report-card.pdf",
+                  "type": "file"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "upload"]
+            }
+          }
+        },
+        {
+          "name": "3.6 Update Carol's Performance (78% avg)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('✅ Carol performance updated - Should show B- (78%)');",
+                  "} else {",
+                  "    console.log('❌ Failed to update Carol performance');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"performance\": [\n    {\"subject\": \"Mathematics\", \"grade\": \"B- (75%)\", \"teacher\": \"Mr. Smith\", \"comments\": \"Needs more practice\"},\n    {\"subject\": \"Science\", \"grade\": \"B (80%)\", \"teacher\": \"Dr. Brown\", \"comments\": \"Average performance\"},\n    {\"subject\": \"English\", \"grade\": \"B- (76%)\", \"teacher\": \"Ms. Johnson\", \"comments\": \"Can improve with effort\"},\n    {\"subject\": \"History\", \"grade\": \"B (82%)\", \"teacher\": \"Mr. Davis\", \"comments\": \"Fair understanding\"},\n    {\"subject\": \"Art\", \"grade\": \"C+ (78%)\", \"teacher\": \"Ms. Wilson\", \"comments\": \"Needs more creativity\"},\n    {\"subject\": \"Physical Ed\", \"grade\": \"B (77%)\", \"teacher\": \"Coach Miller\", \"comments\": \"Adequate participation\"}\n  ],\n  \"teacherComments\": \"Carol has potential but needs to put in more effort.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/{{reportCardId3}}/performance",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "{{reportCardId3}}", "performance"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. LEADERBOARD & ANALYTICS",
+      "item": [
+        {
+          "name": "4.1 Get Class Leaderboard",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    console.log('✅ LEADERBOARD RESULTS:');",
+                  "    console.log(`Class Average: ${data.classAverage}%`);",
+                  "    console.log(`Total Students: ${data.totalStudents}`);",
+                  "    data.leaderboard.forEach((student, index) => {",
+                  "        console.log(`${student.position}. ${student.name} - ${student.totalScore}%`);",
+                  "    });",
+                  "} else {",
+                  "    console.log('❌ Failed to get leaderboard');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacherToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/report-cards/leaderboard/10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "report-cards", "leaderboard", "10"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. PARENT ACCESS MODULE",
+      "item": [
+        {
+          "name": "5.1 Login as Parent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('parentToken', response.token);",
+                  "    console.log('✅ Parent login successful');",
+                  "} else {",
+                  "    console.log('❌ Parent login failed');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice.parent@demo.com\",\n  \"password\": \"demo123\",\n  \"role\": \"Parent\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "5.2 Get Parent's Children",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const children = pm.response.json();",
+                  "    console.log(`✅ Parent can see ${children.length} children`);",
+                  "} else {",
+                  "    console.log('❌ Failed to get children');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{parentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/parents/children",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parents", "children"]
+            }
+          }
+        },
+        {
+          "name": "5.3 Get Child Performance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const performance = pm.response.json();",
+                  "    console.log('✅ Parent can view child performance');",
+                  "    console.log(`Subjects: ${performance.subjects.length}`);",
+                  "} else {",
+                  "    console.log('❌ Failed to get child performance');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{parentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/parents/performance/{{studentId1}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parents", "performance", "{{studentId1}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

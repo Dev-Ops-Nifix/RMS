@@ -1,0 +1,23 @@
+STUDENT REPORT CARD
+
+Student Name: Alice Johnson
+Student ID: STU001
+Class: 10-A
+Academic Year: 2023-2024
+Period: Q1 (Sep - Nov)
+
+Report Card Table:
+Subject          Grade       Teacher        Comments
+Mathematics      A+ (98%)    Mr. Smith      Excellent mathematical skills
+Science          A+ (97%)    Dr. Brown      Outstanding lab work
+English          A (95%)     Ms. Johnson    Strong writing abilities
+History          A+ (99%)    Mr. Davis      Exceptional knowledge
+Art              A (93%)     Ms. Wilson     Very creative work
+Physical Ed      A+ (98%)    Coach Miller   Great athletic performance
+
+Overall Grade: A+ (96%)
+Class Rank: 1/30
+Attendance: 98%
+
+Teacher Comments:
+Alice is an exceptional student who consistently demonstrates excellence across all subjects. Her dedication and hard work are commendable.
