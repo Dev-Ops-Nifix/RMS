@@ -3,16 +3,9 @@ const router = express.Router();
 const adminTeacherChatController = require('../controllers/adminTeacherChatController');
 const auth = require('../middleware/auth');
 
-// Admin routes
-router.post('/admin/send', auth(['Admin']), adminTeacherChatController.adminSendMessage);
-router.get('/admin/chats', auth(['Admin']), adminTeacherChatController.getAdminChats);
-
-// Teacher routes
-router.post('/teacher/send', auth(['Teacher']), adminTeacherChatController.teacherSendMessage);
-router.get('/teacher/chats', auth(['Teacher']), adminTeacherChatController.getTeacherChats);
-router.get('/admins', auth(['Teacher']), adminTeacherChatController.getAdmins);
-
-// Shared routes
-router.get('/history/:adminId/:teacherId', auth(['Admin', 'Teacher']), adminTeacherChatController.getChatHistory);
+// Admin routes for viewing class chats
+router.get('/classes', auth(['Admin']), adminTeacherChatController.getClassOverview);
+router.get('/class/:classNum/:section', auth(['Admin']), adminTeacherChatController.getClassChats);
+router.get('/history/:teacherId/:parentId/:studentId', auth(['Admin']), adminTeacherChatController.getChatHistory);
 
 module.exports = router;

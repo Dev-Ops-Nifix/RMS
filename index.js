@@ -16,6 +16,8 @@ const dashboardRoutes = require('./routes/dashboard');
 const performanceRoutes = require('./routes/performance');
 const planRoutes = require('./routes/plans');
 const supportRoutes = require('./routes/support');
+const testRoutes = require('./routes/tests');
+const eventRoutes = require('./routes/events');
 
 const app = express();
 app.use(cors());
@@ -34,6 +36,8 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api/tests', testRoutes);
+app.use('/api/events', eventRoutes);
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/report-card-system', {
   useNewUrlParser: true,

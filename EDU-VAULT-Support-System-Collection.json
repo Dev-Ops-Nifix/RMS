@@ -1,0 +1,612 @@
+{
+  "info": {
+    "name": "EDU VAULT - Support System",
+    "description": "Complete Postman collection for EDU VAULT Support/Ticket System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@vault.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teacher@vault.com\",\n  \"password\": \"teacher123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Parent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"parent@vault.com\",\n  \"password\": \"parent123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Public Support Endpoints",
+      "item": [
+        {
+          "name": "Create Support Ticket (Public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"subject\": \"Unable to access student reports\",\n  \"message\": \"I am having trouble accessing my child's report cards. The page keeps loading but never shows the reports.\",\n  \"priority\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get FAQ (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/support/faq",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "faq"]
+            }
+          }
+        },
+        {
+          "name": "Search FAQ (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/support/faq?search=login",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "faq"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "login"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Documentation Resources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/support/resources/documentation",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "resources", "documentation"]
+            }
+          }
+        },
+        {
+          "name": "Get Tutorial Resources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/support/resources/tutorial",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "resources", "tutorial"]
+            }
+          }
+        },
+        {
+          "name": "Get Brochure Resources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/support/resources/brochure",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "resources", "brochure"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Support Endpoints (Authenticated)",
+      "item": [
+        {
+          "name": "Create Support Ticket (Authenticated)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"subject\": \"Performance data not updating\",\n  \"message\": \"The performance charts for my students are showing outdated information from last month.\",\n  \"priority\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get My Tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Ticket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets/TKT-1234567890-ABCD",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets", "TKT-1234567890-ABCD"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Support Management",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Filter Tickets by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/tickets?status=open",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "tickets"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "open"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Tickets by Priority",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/tickets?priority=high",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "tickets"],
+              "query": [
+                {
+                  "key": "priority",
+                  "value": "high"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Ticket Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in-progress\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/tickets/TKT-1234567890-ABCD",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "tickets", "TKT-1234567890-ABCD"]
+            }
+          }
+        },
+        {
+          "name": "Reply to Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\",\n  \"adminReply\": \"Thank you for reporting this issue. We have identified the problem and deployed a fix. The performance data should now be updating correctly. Please clear your browser cache and try again.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/tickets/TKT-1234567890-ABCD",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "tickets", "TKT-1234567890-ABCD"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "FAQ Management (Admin)",
+      "item": [
+        {
+          "name": "Create FAQ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I reset my password?\",\n  \"answer\": \"To reset your password, click on the 'Forgot Password' link on the login page and follow the instructions sent to your email.\",\n  \"category\": \"account\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/faq",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "faq"]
+            }
+          }
+        },
+        {
+          "name": "Update FAQ",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How do I reset my password?\",\n  \"answer\": \"To reset your password, click on the 'Forgot Password' link on the login page, enter your email address, and follow the instructions sent to your registered email address.\",\n  \"category\": \"account\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/faq/FAQ_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "faq", "FAQ_ID_HERE"]
+            }
+          }
+        },
+        {
+          "name": "Delete FAQ",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/faq/FAQ_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "faq", "FAQ_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resource Management (Admin)",
+      "item": [
+        {
+          "name": "Create Documentation Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"User Guide - Getting Started\",\n  \"description\": \"Complete guide for new users to get started with EDU VAULT\",\n  \"type\": \"documentation\",\n  \"url\": \"https://docs.vault.com/getting-started\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/resources",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "resources"]
+            }
+          }
+        },
+        {
+          "name": "Create Tutorial Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Video Tutorial - Creating Report Cards\",\n  \"description\": \"Step-by-step video tutorial on how to create and manage report cards\",\n  \"type\": \"tutorial\",\n  \"url\": \"https://tutorials.vault.com/report-cards\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/resources",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "resources"]
+            }
+          }
+        },
+        {
+          "name": "Create Brochure Resource",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"EDU VAULT Features Overview\",\n  \"description\": \"Comprehensive brochure showcasing all EDU VAULT features and benefits\",\n  \"type\": \"brochure\",\n  \"url\": \"https://vault.com/brochures/features-overview.pdf\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/resources",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "resources"]
+            }
+          }
+        },
+        {
+          "name": "Update Resource",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated User Guide - Getting Started\",\n  \"description\": \"Updated complete guide for new users to get started with EDU VAULT\",\n  \"type\": \"documentation\",\n  \"url\": \"https://docs.vault.com/getting-started-v2\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/admin/resources/RESOURCE_ID_HERE",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "admin", "resources", "RESOURCE_ID_HERE"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Complete Support Flow Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"subject\": \"Test Support Ticket\",\n  \"message\": \"This is a test ticket to verify the support system is working correctly.\",\n  \"priority\": \"low\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/support/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["support", "tickets"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Ticket created successfully', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.be.true;",
+                  "    pm.expect(response.ticket.ticketId).to.exist;",
+                  "    pm.collectionVariables.set('testTicketId', response.ticket.ticketId);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

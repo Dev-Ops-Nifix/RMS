@@ -1,119 +1,133 @@
-const AdminTeacherMessage = require('../models/AdminTeacherMessage');
+const Message = require('../models/Message');
+const Student = require('../models/Student');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
-// Admin sends message to teacher
-exports.adminSendMessage = async (req, res) => {
+// Admin: Get all classes with student counts
+exports.getClassOverview = async (req, res) => {
   try {
-    const { teacherId, content } = req.body;
+    const classes = await Student.aggregate([
+      {
+        $group: {
+          _id: { class: '$class', section: '$section' },
+          studentCount: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          class: '$_id.class',
+          section: '$_id.section',
+          studentCount: 1
+        }
+      },
+      { $sort: { class: 1, section: 1 } }
+    ]);
     
-    const teacher = await User.findOne({ _id: teacherId, role: 'Teacher' });
-    if (!teacher) return res.status(404).json({ message: 'Teacher not found' });
-    
-    const message = new AdminTeacherMessage({
-      adminId: req.user.id,
-      teacherId,
-      sender: 'admin',
-      content
-    });
-    
-    await message.save();
-    res.status(201).json(message);
+    res.json(classes);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Teacher sends message to admin
-exports.teacherSendMessage = async (req, res) => {
+// Admin: Get teacher-parent chats for a specific class
+exports.getClassChats = async (req, res) => {
   try {
-    const { adminId, content } = req.body;
+    const { classNum, section } = req.params;
     
-    const admin = await User.findOne({ _id: adminId, role: 'Admin' });
-    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+    const chats = await Message.aggregate([
+      {
+        $lookup: {
+          from: 'students',
+          localField: 'studentId',
+          foreignField: '_id',
+          as: 'student'
+        }
+      },
+      { $unwind: '$student' },
+      {
+        $match: {
+          'student.class': classNum,
+          'student.section': section
+        }
+      },
+      {
+        $group: {
+          _id: {
+            teacherId: '$teacherId',
+            parentId: '$parentId',
+            studentId: '$studentId'
+          },
+          lastMessage: { $last: '$content' },
+          lastTimestamp: { $last: '$timestamp' },
+          messageCount: { $sum: 1 }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id.teacherId',
+          foreignField: '_id',
+          as: 'teacher'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id.parentId',
+          foreignField: '_id',
+          as: 'parent'
+        }
+      },
+      {
+        $lookup: {
+          from: 'students',
+          localField: '_id.studentId',
+          foreignField: '_id',
+          as: 'student'
+        }
+      },
+      { $unwind: '$teacher' },
+      { $unwind: '$parent' },
+      { $unwind: '$student' },
+      {
+        $project: {
+          teacherId: '$_id.teacherId',
+          parentId: '$_id.parentId',
+          studentId: '$_id.studentId',
+          teacherName: '$teacher.name',
+          parentName: '$parent.name',
+          studentName: '$student.name',
+          lastMessage: 1,
+          lastTimestamp: 1,
+          messageCount: 1
+        }
+      },
+      { $sort: { lastTimestamp: -1 } }
+    ]);
     
-    const message = new AdminTeacherMessage({
-      adminId,
-      teacherId: req.user.id,
-      sender: 'teacher',
-      content
-    });
-    
-    await message.save();
-    res.status(201).json(message);
+    res.json(chats);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Get chat history between admin and teacher
+// Admin: Get specific chat history between teacher and parent for a student
 exports.getChatHistory = async (req, res) => {
   try {
-    const { adminId, teacherId } = req.params;
+    const { teacherId, parentId, studentId } = req.params;
     
-    const messages = await AdminTeacherMessage.find({ adminId, teacherId })
-      .populate('adminId', 'name')
-      .populate('teacherId', 'name')
-      .sort({ timestamp: 1 });
+    const messages = await Message.find({
+      teacherId,
+      parentId,
+      studentId
+    })
+    .populate('teacherId', 'name')
+    .populate('parentId', 'name')
+    .populate('studentId', 'name class section')
+    .sort({ timestamp: 1 });
     
     res.json(messages);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Admin: Get all teacher chats
-exports.getAdminChats = async (req, res) => {
-  try {
-    const adminId = req.user.id;
-    
-    const chats = await AdminTeacherMessage.aggregate([
-      { $match: { adminId: require('mongoose').Types.ObjectId(adminId) } },
-      { $group: {
-          _id: '$teacherId',
-          lastMessage: { $last: '$content' },
-          lastTimestamp: { $last: '$timestamp' },
-          unreadCount: { $sum: { $cond: [{ $and: [{ $eq: ['$read', false] }, { $eq: ['$sender', 'teacher'] }] }, 1, 0] } }
-        }
-      },
-      { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'teacher' } },
-      { $unwind: '$teacher' }
-    ]);
-    
-    res.json(chats);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Teacher: Get admin chats
-exports.getTeacherChats = async (req, res) => {
-  try {
-    const teacherId = req.user.id;
-    
-    const chats = await AdminTeacherMessage.aggregate([
-      { $match: { teacherId: require('mongoose').Types.ObjectId(teacherId) } },
-      { $group: {
-          _id: '$adminId',
-          lastMessage: { $last: '$content' },
-          lastTimestamp: { $last: '$timestamp' },
-          unreadCount: { $sum: { $cond: [{ $and: [{ $eq: ['$read', false] }, { $eq: ['$sender', 'admin'] }] }, 1, 0] } }
-        }
-      },
-      { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'admin' } },
-      { $unwind: '$admin' }
-    ]);
-    
-    res.json(chats);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Get all admins (for teacher to select who to chat with)
-exports.getAdmins = async (req, res) => {
-  try {
-    const admins = await User.find({ role: 'Admin' }).select('_id name email');
-    res.json(admins);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

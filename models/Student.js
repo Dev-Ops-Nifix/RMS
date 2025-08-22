@@ -7,7 +7,7 @@ const studentSchema = new mongoose.Schema({
   section: { type: String, required: true },
   teacher: { type: String, required: true },
   teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   avatar: { type: String, default: null }
 });
 

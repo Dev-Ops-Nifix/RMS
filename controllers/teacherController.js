@@ -158,4 +158,66 @@ const assignStudentToMe = async (req, res) => {
   }
 };
 
-module.exports = { getMyStudents, addStudent, getStudent, updateStudent, deleteStudent, assignStudentToMe };
+const createTeacher = async (req, res) => {
+  try {
+    const { teacherId, name, email, class: teacherClass, section } = req.body;
+    
+    // Validate required fields
+    if (!teacherId || !name || !email || !teacherClass || !section) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    
+    // Check if teacher ID or email already exists
+    const existingTeacher = await User.findOne({
+      $or: [{ teacherId }, { email }]
+    });
+    
+    if (existingTeacher) {
+      return res.status(400).json({ message: 'Teacher ID or email already exists' });
+    }
+    
+    // Generate default password
+    const defaultPassword = 'teacher123';
+    
+    const teacher = new User({
+      teacherId,
+      name,
+      email,
+      password: defaultPassword,
+      role: 'Teacher',
+      class: teacherClass,
+      section
+    });
+    
+    await teacher.save();
+    
+    res.status(201).json({
+      message: 'Teacher created successfully',
+      teacher: {
+        teacherId: teacher.teacherId,
+        name: teacher.name,
+        email: teacher.email,
+        class: teacher.class,
+        section: teacher.section,
+        role: teacher.role
+      }
+    });
+  } catch (err) {
+    console.error('Teacher creation error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+const getAllTeachers = async (req, res) => {
+  try {
+    const teachers = await User.find({ role: 'Teacher' })
+      .select('teacherId name email class section')
+      .sort({ name: 1 });
+    
+    res.json(teachers);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getMyStudents, addStudent, getStudent, updateStudent, deleteStudent, assignStudentToMe, createTeacher, getAllTeachers };
