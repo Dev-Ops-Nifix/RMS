@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const reportCardRoutes = require('./routes/reportCards');
 const authRoutes = require('./routes/auth');
@@ -18,10 +19,13 @@ const planRoutes = require('./routes/plans');
 const supportRoutes = require('./routes/support');
 const testRoutes = require('./routes/tests');
 const eventRoutes = require('./routes/events');
+const settingsRoutes = require('./routes/settings');
+const profileRoutes = require('./routes/profile');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/report-cards', reportCardRoutes);
 app.use('/api/parents', parentRoutes);
@@ -38,6 +42,8 @@ app.use('/api/plans', planRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/profile', profileRoutes);
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/report-card-system', {
   useNewUrlParser: true,

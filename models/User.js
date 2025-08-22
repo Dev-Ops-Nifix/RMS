@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['SuperAdmin', 'Admin', 'Teacher', 'Parent'], required: true },
   name: String,
+  mobile: String,
+  profilePicture: String,
   teacherId: { type: String, unique: true, sparse: true },
   class: { type: String },
   section: { type: String },
@@ -15,6 +17,15 @@ const userSchema = new mongoose.Schema({
     amount: { type: Number },
     startDate: { type: Date },
     endDate: { type: Date }
+  },
+  settings: {
+    twoFactorAuth: { type: Boolean, default: false },
+    darkMode: { type: Boolean, default: false },
+    notifications: {
+      email: { type: Boolean, default: true },
+      sms: { type: Boolean, default: false },
+      app: { type: Boolean, default: true }
+    }
   }
 });
 
