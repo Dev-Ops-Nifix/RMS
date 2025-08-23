@@ -94,7 +94,7 @@ exports.getTeacherChats = async (req, res) => {
     const mongoose = require('mongoose');
     
     const chats = await Message.aggregate([
-      { $match: { teacherId: mongoose.Types.ObjectId(teacherId) } },
+      { $match: { teacherId: new mongoose.Types.ObjectId(teacherId) } },
       { $group: { 
           _id: { parentId: '$parentId', studentId: '$studentId' },
           lastMessage: { $last: '$content' },
@@ -118,7 +118,7 @@ exports.getParentChats = async (req, res) => {
     const mongoose = require('mongoose');
     
     const chats = await Message.aggregate([
-      { $match: { parentId: mongoose.Types.ObjectId(parentId) } },
+      { $match: { parentId: new mongoose.Types.ObjectId(parentId) } },
       { $group: { 
           _id: { teacherId: '$teacherId', studentId: '$studentId' },
           lastMessage: { $last: '$content' },

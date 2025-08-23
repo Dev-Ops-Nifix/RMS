@@ -1,0 +1,542 @@
+{
+  "info": {
+    "name": "EDU_VAULT Mobile API Test Scenarios",
+    "description": "Test scenarios for mobile authentication and parent dashboard APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Request OTP - Valid Phone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request OTP - Invalid Phone Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"invalid-phone\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request OTP - Missing Phone Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request OTP - Empty Body",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP - Valid Credentials",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP - Invalid OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\",\n  \"otp\": \"000000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP - Expired OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP - Missing Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify OTP - Unregistered Phone",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+9999999999\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Parent Dashboard",
+      "item": [
+        {
+          "name": "Get Children List - Valid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Children List - No Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Children List - Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid-token-here"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Children List - Expired Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Children List - Wrong Role Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Child Details",
+      "item": [
+        {
+          "name": "Get Child Details - Valid Student ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "{{studentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Child Details - Invalid Student ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/invalid-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "invalid-id"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Child Details - Non-existent Student ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "999999"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Child Details - No Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Child Details - Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid-token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "123"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Child Details - Unauthorized Parent",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/456",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "456"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Edge Cases & Security",
+      "item": [
+        {
+          "name": "SQL Injection - Phone Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"'; DROP TABLE users; --\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "XSS - Phone Number",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"<script>alert('xss')</script>\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rate Limiting - Multiple OTP Requests",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Large Payload - Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"" + "A".repeat(10000) + "\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Malformed JSON",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phoneNumber\": \"+1234567890\",\n  \"extraField\":"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

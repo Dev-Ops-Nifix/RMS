@@ -1,0 +1,202 @@
+POSTMAN TEST CASES - PERFORMANCE ANALYTICS SYSTEM
+
+=== COLLECTION: Performance Analytics ===
+
+1. GET Performance Overview - This Month
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/overview?period=month
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with averageScore, totalTests, highestScore, improvement, gpa, rank
+
+2. GET Recent Tests - This Month
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/recent-tests?period=month&limit=5
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with recentTests array, period, total count
+
+3. GET Subject Performance - This Month
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/subjects?period=month
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with subjects array containing averageScore, grade, teacher
+
+4. GET Strengths and Improvements
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/strengths-improvements?period=month
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with strengths and improvements arrays
+
+5. GET Performance Trends
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/trends?period=month
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with trends, overallTrend, comparison data
+
+6. GET Complete Dashboard - This Month
+   Method: GET
+   URL: {{baseUrl}}/api/analytics/{{studentId}}/dashboard?period=month
+   Headers: Authorization: Bearer {{authToken}}
+   Expected: 200 OK with overview, recentTests, subjects, strengths, improvements, trends
+
+7. POST Add Single Performance
+   Method: POST
+   URL: {{baseUrl}}/api/teacher/performance
+   Headers: Authorization: Bearer {{authToken}}, Content-Type: application/json
+   Body: {
+     "studentId": "{{studentId}}",
+     "subject": "Mathematics",
+     "testType": "quiz",
+     "marks": 18,
+     "totalMarks": 20,
+     "date": "2024-01-15"
+   }
+   Expected: 201 Created with performance data, grade, reportCardUpdated
+
+8. POST Batch Add Performance
+   Method: POST
+   URL: {{baseUrl}}/api/teacher/performance/batch
+   Headers: Authorization: Bearer {{authToken}}, Content-Type: application/json
+   Body: {
+     "performances": [
+       {
+         "studentId": "{{studentId}}",
+         "subject": "Science",
+         "testType": "test",
+         "marks": 85,
+         "totalMarks": 100,
+         "date": "2024-01-15"
+       }
+     ]
+   }
+   Expected: 201 Created with results array, notificationsSent count
+
+9. PUT Update Performance
+   Method: PUT
+   URL: {{baseUrl}}/api/teacher/performance/{{performanceId}}
+   Headers: Authorization: Bearer {{authToken}}, Content-Type: application/json
+   Body: {
+     "marks": 19,
+     "totalMarks": 20
+   }
+   Expected: 200 OK with updated performance, grade
+
+10. GET Dynamic Report Card - This Month
+    Method: GET
+    URL: {{baseUrl}}/api/report-cards/{{studentId}}?period=month
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with student info, overall performance, subjects array
+
+=== COLLECTION: Time Period Tests ===
+
+11. GET Overview - This Week
+    Method: GET
+    URL: {{baseUrl}}/api/analytics/{{studentId}}/overview?period=week
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with week-filtered data
+
+12. GET Overview - This Semester
+    Method: GET
+    URL: {{baseUrl}}/api/analytics/{{studentId}}/overview?period=semester
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with semester-filtered data
+
+13. GET Dashboard - This Week
+    Method: GET
+    URL: {{baseUrl}}/api/analytics/{{studentId}}/dashboard?period=week
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with week-filtered complete data
+
+=== COLLECTION: Class Analytics ===
+
+14. GET Class Leaderboard
+    Method: GET
+    URL: {{baseUrl}}/api/report-cards/class/leaderboard?period=month
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with rankings, topThree, classAverage
+
+15. GET School Analytics (Admin)
+    Method: GET
+    URL: {{baseUrl}}/api/report-cards/school/analytics?period=month
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 200 OK with school-wide analytics
+
+=== COLLECTION: Error Scenarios ===
+
+16. GET Invalid Student ID
+    Method: GET
+    URL: {{baseUrl}}/api/analytics/invalid_id/overview
+    Headers: Authorization: Bearer {{authToken}}
+    Expected: 404 Not Found
+
+17. POST Invalid Performance Data
+    Method: POST
+    URL: {{baseUrl}}/api/teacher/performance
+    Headers: Authorization: Bearer {{authToken}}, Content-Type: application/json
+    Body: {
+     "studentId": "{{studentId}}",
+     "marks": "invalid"
+   }
+   Expected: 400 Bad Request
+
+18. GET Unauthorized Access
+    Method: GET
+    URL: {{baseUrl}}/api/analytics/{{studentId}}/overview
+    Headers: (No Authorization header)
+    Expected: 401 Unauthorized
+
+=== VARIABLES ===
+baseUrl: http://localhost:5000
+studentId: 64f8a1b2c3d4e5f6a7b8c9d0
+authToken: your_jwt_token_here
+performanceId: 64f8a1b2c3d4e5f6a7b8c9d1
+
+=== TEST SCRIPTS ===
+
+For each request, add these test scripts:
+
+// Test 1-6: Analytics Endpoints
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+pm.test("Response has required fields", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData).to.have.property('period');
+});
+
+// Test 7-9: Performance Input
+pm.test("Status code is 201", function () {
+    pm.response.to.have.status(201);
+});
+
+pm.test("Performance created successfully", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData).to.have.property('performance');
+    pm.expect(jsonData).to.have.property('grade');
+});
+
+// Test 10: Report Card
+pm.test("Report card generated", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData).to.have.property('student');
+    pm.expect(jsonData).to.have.property('overall');
+    pm.expect(jsonData).to.have.property('subjects');
+});
+
+=== ENVIRONMENT SETUP ===
+
+Create environment with:
+- baseUrl: http://localhost:5000
+- authToken: (Get from login endpoint)
+- studentId: (Get from students list)
+- performanceId: (Get from performance creation)
+
+=== EXECUTION ORDER ===
+
+1. Run authentication to get token
+2. Get student list to get studentId
+3. Run performance analytics tests (1-6)
+4. Run performance input tests (7-9)
+5. Run time period tests (11-13)
+6. Run class analytics tests (14-15)
+7. Run error scenario tests (16-18)

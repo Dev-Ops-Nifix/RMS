@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
     startDate: { type: Date },
     endDate: { type: Date }
   },
+  otp: {
+    code: { type: String },
+    expiresAt: { type: Date },
+    verified: { type: Boolean, default: false }
+  },
   settings: {
     twoFactorAuth: { type: Boolean, default: false },
     darkMode: { type: Boolean, default: false },

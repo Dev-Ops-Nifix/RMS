@@ -1,0 +1,179 @@
+PARENT PORTAL POSTMAN TEST SCENARIOS
+
+=== SETUP REQUIREMENTS ===
+1. Server running on http://localhost:5000
+2. Valid JWT tokens for Parent and Teacher roles
+3. Sample student data in database
+
+=== TEST 1: PARENT DASHBOARD ===
+Method: GET
+URL: http://localhost:5000/api/parents/dashboard/STUDENT_ID_HERE
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 200
+{
+  "student": {
+    "name": "John Doe",
+    "class": "Grade 7",
+    "section": "Section B", 
+    "gpa": 4.0
+  },
+  "currentSemester": {
+    "progress": 87,
+    "period": "2023 Fall - Week 7"
+  },
+  "overallProgress": 87,
+  "upcomingTests": 3
+}
+
+=== TEST 2: ACADEMIC PROGRESS ===
+Method: GET
+URL: http://localhost:5000/api/parents/progress/STUDENT_ID_HERE
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 200
+{
+  "subjectProgress": [
+    {
+      "subject": "Math",
+      "average": 92,
+      "grade": "A+",
+      "totalTests": 5,
+      "trend": "up"
+    }
+  ],
+  "trends": []
+}
+
+=== TEST 3: TESTS AND ASSIGNMENTS ===
+Method: GET
+URL: http://localhost:5000/api/parents/tests/STUDENT_ID_HERE
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 200
+{
+  "upcoming": [],
+  "recent": []
+}
+
+=== TEST 4: ACTIVITY FEED ===
+Method: GET
+URL: http://localhost:5000/api/parents/activity/STUDENT_ID_HERE
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 200
+[]
+
+=== TEST 5: PARENT NOTIFICATIONS ===
+Method: GET
+URL: http://localhost:5000/api/parents/notifications
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 200
+[]
+
+=== TEST 6: TEACHER ADD PERFORMANCE (AUTO-NOTIFY) ===
+Method: POST
+URL: http://localhost:5000/api/parents/teacher/performance
+Headers:
+Authorization: Bearer TEACHER_JWT_TOKEN
+Content-Type: application/json
+
+Body:
+{
+  "studentId": "STUDENT_ID_HERE",
+  "subject": "Math",
+  "testType": "quiz",
+  "marks": 85,
+  "totalMarks": 100,
+  "date": "2023-11-01"
+}
+
+Expected Response: 201
+{
+  "message": "Performance recorded and parent notified"
+}
+
+=== TEST 7: TEACHER SCHEDULE TEST (AUTO-NOTIFY) ===
+Method: POST
+URL: http://localhost:5000/api/parents/teacher/test
+Headers:
+Authorization: Bearer TEACHER_JWT_TOKEN
+Content-Type: application/json
+
+Body:
+{
+  "title": "Math Quiz",
+  "subject": "Math",
+  "class": "Grade 7",
+  "section": "Section B",
+  "date": "2023-11-15",
+  "duration": 60,
+  "totalMarks": 100
+}
+
+Expected Response: 201
+{
+  "message": "Test scheduled and parents notified"
+}
+
+=== TEST 8: UNAUTHORIZED ACCESS ===
+Method: GET
+URL: http://localhost:5000/api/parents/dashboard/WRONG_STUDENT_ID
+Headers:
+Authorization: Bearer PARENT_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 404
+{
+  "message": "Student not found"
+}
+
+=== TEST 9: NO AUTH TOKEN ===
+Method: GET
+URL: http://localhost:5000/api/parents/dashboard/STUDENT_ID_HERE
+Headers:
+Content-Type: application/json
+
+Expected Response: 401
+{
+  "message": "Access denied"
+}
+
+=== TEST 10: WRONG ROLE ACCESS ===
+Method: GET
+URL: http://localhost:5000/api/parents/dashboard/STUDENT_ID_HERE
+Headers:
+Authorization: Bearer TEACHER_JWT_TOKEN
+Content-Type: application/json
+
+Expected Response: 403
+{
+  "message": "Insufficient permissions"
+}
+
+=== VERIFICATION STEPS ===
+1. Run Test 6 (Add Performance)
+2. Run Test 5 (Check Notifications) - Should show new notification
+3. Run Test 1 (Dashboard) - Should show updated progress
+4. Run Test 7 (Schedule Test)
+5. Run Test 3 (Tests) - Should show upcoming test
+6. Run Test 4 (Activity) - Should show new activities
+
+=== SAMPLE DATA NEEDED ===
+Replace these placeholders:
+- STUDENT_ID_HERE: Valid MongoDB ObjectId of student
+- PARENT_JWT_TOKEN: JWT token for parent user
+- TEACHER_JWT_TOKEN: JWT token for teacher user
+- Ensure student.parentId matches parent user ID
+- Ensure student.teacherId matches teacher user ID

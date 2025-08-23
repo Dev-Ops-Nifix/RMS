@@ -8,7 +8,8 @@ const studentSchema = new mongoose.Schema({
   teacher: { type: String, required: true },
   teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
-  avatar: { type: String, default: null }
+  profilePicture: { type: String, default: null },
+  dateOfBirth: { type: Date, required: true }
 });
 
 module.exports = mongoose.model('Student', studentSchema);

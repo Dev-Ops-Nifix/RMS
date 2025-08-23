@@ -13,14 +13,17 @@ const teacherMessageRoutes = require('./routes/teacherMessages');
 const adminTeacherRoutes = require('./routes/adminTeachers');
 const adminTeacherChatRoutes = require('./routes/adminTeacherChat');
 const mobileParentRoutes = require('./routes/mobileParent');
+const mobileAuthRoutes = require('./routes/mobileAuth');
 const dashboardRoutes = require('./routes/dashboard');
 const performanceRoutes = require('./routes/performance');
+const performanceAnalyticsRoutes = require('./routes/performanceAnalytics');
 const planRoutes = require('./routes/plans');
 const supportRoutes = require('./routes/support');
 const testRoutes = require('./routes/tests');
 const eventRoutes = require('./routes/events');
 const settingsRoutes = require('./routes/settings');
 const profileRoutes = require('./routes/profile');
+const homeworkRoutes = require('./routes/homework');
 
 const app = express();
 app.use(cors());
@@ -35,15 +38,18 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/teacher-messages', teacherMessageRoutes);
 app.use('/api/admin/teachers', adminTeacherRoutes);
 app.use('/api/admin-teacher-chat', adminTeacherChatRoutes);
+app.use('/api/mobile/auth', mobileAuthRoutes);
 app.use('/api/mobile/parent', mobileParentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/performance', performanceRoutes);
+app.use('/api/analytics', performanceAnalyticsRoutes);
 app.use('/api/plans', planRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/homework', homeworkRoutes);
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/report-card-system', {
   useNewUrlParser: true,

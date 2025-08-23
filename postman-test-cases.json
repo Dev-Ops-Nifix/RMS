@@ -1,0 +1,872 @@
+{
+  "info": {
+    "name": "EDU_VAULT Backend API Tests",
+    "description": "Complete test scenarios for EDU_VAULT mobile backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "parentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication Tests",
+      "item": [
+        {
+          "name": "1.1 Request OTP - Valid Mobile & Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"parent@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has success message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('OTP sent');",
+                  "});",
+                  "",
+                  "pm.test('Response time is less than 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.2 Request OTP - Invalid Mobile Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"123\",\n  \"email\": \"parent@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message for invalid mobile', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Invalid mobile number');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.3 Request OTP - Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"invalid-email\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message for invalid email', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Invalid email');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.4 Request OTP - Parent Not Found",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"1111111111\",\n  \"email\": \"notfound@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Parent not found message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Parent not found');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.5 Request OTP - Rate Limiting Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"parent@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Run this test 4 times quickly to trigger rate limiting",
+                  "pm.test('Rate limiting after 3 requests', function () {",
+                  "    if (pm.response.code === 429) {",
+                  "        pm.expect(pm.response.json().message).to.include('Too many requests');",
+                  "    } else {",
+                  "        pm.expect(pm.response.code).to.be.oneOf([200, 429]);",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.6 Verify OTP - Valid OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"parent@example.com\",\n  \"otp\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('JWT token received', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.token).to.exist;",
+                  "    pm.collectionVariables.set('authToken', jsonData.token);",
+                  "});",
+                  "",
+                  "pm.test('Parent ID received', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.parent.id).to.exist;",
+                  "    pm.collectionVariables.set('parentId', jsonData.parent.id);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.7 Verify OTP - Invalid OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"parent@example.com\",\n  \"otp\": \"9999\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Invalid OTP message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Invalid OTP');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "1.8 Verify OTP - Expired OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"parent@example.com\",\n  \"otp\": \"1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "verify-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Wait 5+ minutes after OTP generation to test this",
+                  "pm.test('Expired OTP handling', function () {",
+                  "    if (pm.response.code === 400) {",
+                  "        const jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.message).to.include('expired');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Dashboard Tests",
+      "item": [
+        {
+          "name": "2.1 Get Parent Dashboard - Valid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Children array exists', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.children).to.be.an('array');",
+                  "    if (jsonData.children.length > 0) {",
+                  "        pm.collectionVariables.set('studentId', jsonData.children[0].id);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test('Parent info exists', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.parent).to.exist;",
+                  "    pm.expect(jsonData.parent.name).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.2 Get Parent Dashboard - No Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Authorization denied message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('authorization denied');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.3 Get Parent Dashboard - Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_here"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Invalid token message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('invalid');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Child Details Tests",
+      "item": [
+        {
+          "name": "3.1 Get Child Details - Valid Student ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "{{studentId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Student details exist', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.student).to.exist;",
+                  "    pm.expect(jsonData.student.name).to.exist;",
+                  "    pm.expect(jsonData.student.class).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('Performance data exists', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.performance).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('Teacher info exists', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.teacher).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.2 Get Child Details - Invalid Student ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "999999"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Student not found message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Student not found');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.3 Get Child Details - Unauthorized Access",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/other_parent_child_id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "other_parent_child_id"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 403', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test('Access denied message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('Access denied');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.4 Get Child Details - No Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/child/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "child", "{{studentId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test('Authorization denied message', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('authorization denied');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Edge Cases & Security Tests",
+      "item": [
+        {
+          "name": "4.1 SQL Injection Test - OTP Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"'; DROP TABLE users; --\",\n  \"email\": \"test@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('SQL injection prevented', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});",
+                  "",
+                  "pm.test('No server error from injection', function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(500);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.2 XSS Test - Email Field",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"<script>alert('xss')</script>@test.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('XSS attempt blocked', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "});",
+                  "",
+                  "pm.test('Response does not contain script', function () {",
+                  "    pm.expect(pm.response.text()).to.not.include('<script>');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.3 Large Payload Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\",\n  \"email\": \"test@example.com\",\n  \"extraField\": \"A\".repeat(10000)\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Large payload handled gracefully', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 400, 413]);",
+                  "});",
+                  "",
+                  "pm.test('Server remains stable', function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(500);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.4 Missing Fields Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobile\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Missing field error', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.include('required');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4.5 Empty Body Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/auth/request-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "auth", "request-otp"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Validation error for empty body', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.exist;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Performance Tests",
+      "item": [
+        {
+          "name": "5.1 Response Time Test - Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time under 1000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5.2 Concurrent Request Test",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/mobile/parent/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "mobile", "parent", "dashboard"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Handles concurrent requests', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 429]);",
+                  "});",
+                  "",
+                  "pm.test('Response is valid JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

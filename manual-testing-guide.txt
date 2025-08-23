@@ -1,0 +1,170 @@
+MANUAL TESTING GUIDE - PERFORMANCE ANALYTICS
+
+=== STEP 1: GET AUTH TOKEN ===
+
+1. Login as Teacher
+   POST http://localhost:5000/api/auth/login
+   Body: {
+     "email": "teacher@example.com",
+     "password": "password123"
+   }
+   Copy the "token" from response
+
+2. Login as Parent  
+   POST http://localhost:5000/api/auth/login
+   Body: {
+     "email": "parent@example.com", 
+     "password": "password123"
+   }
+   Copy the "token" from response
+
+=== STEP 2: GET STUDENT ID ===
+
+GET http://localhost:5000/api/students
+Headers: Authorization: Bearer YOUR_TOKEN
+Copy a student "_id" from response
+
+=== STEP 3: TEST "THIS MONTH" ANALYTICS ===
+
+Test 1: Performance Overview
+GET http://localhost:5000/api/analytics/STUDENT_ID/overview?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: averageScore, totalTests, gpa, rank
+
+Test 2: Complete Dashboard  
+GET http://localhost:5000/api/analytics/STUDENT_ID/dashboard?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: overview, subjects, strengths, trends
+
+Test 3: Subject Performance
+GET http://localhost:5000/api/analytics/STUDENT_ID/subjects?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: subjects array with grades
+
+Test 4: Recent Tests
+GET http://localhost:5000/api/analytics/STUDENT_ID/recent-tests?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: recentTests array
+
+Test 5: Strengths & Improvements
+GET http://localhost:5000/api/analytics/STUDENT_ID/strengths-improvements?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: strengths and improvements arrays
+
+=== STEP 4: TEST TEACHER GRADE INPUT ===
+
+Test 6: Add Single Grade (Teacher token only)
+POST http://localhost:5000/api/teacher/performance
+Headers: Authorization: Bearer TEACHER_TOKEN
+Body: {
+  "studentId": "STUDENT_ID",
+  "subject": "Mathematics", 
+  "testType": "quiz",
+  "marks": 18,
+  "totalMarks": 20,
+  "date": "2024-01-15"
+}
+Expected: 201 status, performance created
+
+Test 7: Batch Add Grades (Teacher token only)
+POST http://localhost:5000/api/teacher/performance/batch
+Headers: Authorization: Bearer TEACHER_TOKEN
+Body: {
+  "performances": [
+    {
+      "studentId": "STUDENT_ID",
+      "subject": "Science",
+      "testType": "test", 
+      "marks": 85,
+      "totalMarks": 100,
+      "date": "2024-01-15"
+    }
+  ]
+}
+Expected: 201 status, batch created
+
+=== STEP 5: TEST REPORT CARD GENERATION ===
+
+Test 8: Generate Report Card
+GET http://localhost:5000/api/report-cards/STUDENT_ID?period=month
+Headers: Authorization: Bearer YOUR_TOKEN
+Expected: student info, overall performance, subjects
+
+=== STEP 6: TEST TIME PERIODS ===
+
+Test 9: This Week
+GET http://localhost:5000/api/analytics/STUDENT_ID/overview?period=week
+Headers: Authorization: Bearer YOUR_TOKEN
+
+Test 10: This Semester  
+GET http://localhost:5000/api/analytics/STUDENT_ID/overview?period=semester
+Headers: Authorization: Bearer YOUR_TOKEN
+
+=== AUTHENTICATION ROLES ===
+
+PARENT TOKEN: Can view analytics for their children only
+TEACHER TOKEN: Can view analytics for their students + add grades
+ADMIN TOKEN: Can view all analytics + add grades
+
+=== SAMPLE RESPONSES ===
+
+Performance Overview Response:
+{
+  "studentName": "Emma Johnson",
+  "period": "month", 
+  "overview": {
+    "averageScore": 88.8,
+    "totalTests": 4,
+    "highestScore": 92,
+    "improvement": 2.5,
+    "gpa": "3.8",
+    "rank": "4/28"
+  }
+}
+
+Dashboard Response:
+{
+  "overview": {...},
+  "recentTests": [...],
+  "subjects": [...],
+  "strengths": [...],
+  "improvements": [...],
+  "trends": [...],
+  "period": "month"
+}
+
+=== TESTING CHECKLIST ===
+
+□ Login as Teacher - get token
+□ Login as Parent - get token  
+□ Get student ID from students list
+□ Test performance overview (This Month)
+□ Test complete dashboard (This Month)
+□ Test subject performance
+□ Test recent tests
+□ Test strengths/improvements
+□ Add single grade as teacher
+□ Add batch grades as teacher
+□ Generate report card
+□ Test different time periods (week, semester)
+□ Verify parent can only see their children
+□ Verify teacher can only see their students
+
+=== TROUBLESHOOTING ===
+
+401 Unauthorized: Check auth token is valid
+404 Not Found: Check student ID exists
+403 Forbidden: Check user role permissions
+500 Server Error: Check server logs
+
+=== QUICK TEST COMMANDS ===
+
+Replace YOUR_TOKEN and STUDENT_ID with actual values:
+
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:5000/api/analytics/STUDENT_ID/dashboard?period=month"
+
+curl -X POST -H "Authorization: Bearer TEACHER_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"studentId":"STUDENT_ID","subject":"Math","testType":"quiz","marks":18,"totalMarks":20,"date":"2024-01-15"}' \
+  "http://localhost:5000/api/teacher/performance"

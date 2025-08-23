@@ -1,5 +1,15 @@
 const Performance = require('../models/Performance');
 const Student = require('../models/Student');
+const Message = require('../models/Message');
+
+// Helper function to send notification to parent
+const sendNotificationToParent = async (parentId, teacherId, studentId, content) => {
+  try {
+    await Message.create({ parentId, teacherId, studentId, content, sender: 'teacher' });
+  } catch (error) {
+    console.error('Failed to send notification:', error);
+  }
+};
 
 const addPerformance = async (req, res) => {
   try {
@@ -20,7 +30,15 @@ const addPerformance = async (req, res) => {
     });
     
     await performance.save();
-    res.status(201).json({ message: 'Performance record added successfully', performance });
+    
+    // Auto-notify parent
+    const student = await Student.findById(studentId);
+    if (student && student.parentId) {
+      const content = `New ${testType} result for ${student.name} in ${subject}: ${marks}/${totalMarks} (${percentage}%)`;
+      await sendNotificationToParent(student.parentId, teacherId, studentId, content);
+    }
+    
+    res.status(201).json({ message: 'Performance record added successfully and parent notified', performance });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -184,5 +202,6 @@ module.exports = {
   getStudentPerformance,
   getClassPerformance,
   getPerformanceTrends,
-  getSubjectPerformanceStats
+  getSubjectPerformanceStats,
+  sendNotificationToParent
 };
