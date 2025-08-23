@@ -1,0 +1,535 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html {
+    font-family: 'Segoe UI', sans-serif;
+    height: 100%;
+    background-color: #f8f9fc;
+  }
+  
+  .container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  /* Sidebar (main navigation) */
+  .sidebar {
+    width: 220px;
+    background-color: #1f2a40;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    padding: 20px 10px;
+  }
+  
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    margin: 5px 0;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  
+  .sidebar-item:hover {
+    background-color: #2e3a53;
+  }
+  
+  .sidebar-item.active {
+    background-color: #4b5563;
+  }
+  
+  .sidebar-item.logout {
+    margin-top: auto;
+    color: #f87171;
+  }
+  
+  /* Main Content */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+   
+    overflow: hidden;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 30px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    height: 64px;
+  }
+  
+  .search {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-right: 20px;
+    width: 300px;
+    background-color: #f1f3f5;
+    border: none;
+    outline: none;
+  }
+  
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Notification Bell */
+  .icon-wrapper {
+    position: relative;
+    margin-right: 20px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #374151;
+  }
+  
+  .notification-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  /* User Info */
+  .user-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-avatar {
+    background-color: #d1cfe2;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1f2a40;
+    font-size: 16px;
+    margin-right: 8px;
+  }
+  
+  .user-name {
+    font-weight: 500;
+    color: #1f2a40;
+  }
+  
+  /* Support Container */
+  .support-container {
+    flex: 1;
+    padding: 30px;
+    background-color: #f8f9fc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    width: 100%;
+    margin-top: 90px;
+  }
+  
+  .support-container h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #1f2a40;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .support-subtitle {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Search Wrapper */
+  .search-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-box {
+    width: 600px;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f1f3f5;
+    border: none;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  /* FAQ Section */
+  .faq-section {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+  }
+  
+  .faq-section h4 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1f2a40;
+    margin-bottom: 20px;
+  }
+  
+  .faq-item {
+    margin-bottom: 10px;
+  }
+  
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f2a40;
+  }
+  
+  .faq-question:hover {
+    background-color: #f1f3f5;
+  }
+  
+  .faq-toggle {
+    font-size: 18px;
+    color: #4b5563;
+  }
+  
+  .faq-answer {
+    padding: 15px 15px 15px 30px;
+    background-color: #ffffff;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  
+  /* Chat Support Card */
+  .chat-support-card {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .chat-support-card h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2a40;
+    margin-bottom: 15px;
+  }
+  
+  .chat-email {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .chat-email span {
+    margin-right: 8px;
+    color: #2563eb;
+    font-size: 18px;
+  }
+  
+  .chat-email div {
+    text-align: left;
+  }
+  
+  .chat-email p {
+    color: #1f2a40;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .chat-email a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .chat-email p:last-child {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .resources-section {
+    flex: 2; /* slightly bigger */
+    margin: 0; /* remove margin since it's inside combined */
+    box-shadow: none; /* remove shadow (outer card has it) */
+    padding: 0; /* handled by parent card */
+    background: transparent; /* no double white background */
+  }
+  .resource-item {
+    text-align: center;
+    flex: 1;
+  }
+  
+  .resource-item span {
+    display: block;
+    width: 48px;
+    height: 48px;
+    background-color: #f1f3f5;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    line-height: 48px;
+    font-size: 24px;
+    color: #dc2626;
+  }
+  
+  .resource-item:nth-child(2) span {
+    color: #3b82f6;
+  }
+  
+  .resource-item:nth-child(3) span {
+    color: #f472b6;
+  }
+  
+  .resource-item div {
+    text-align: center;
+  }
+  
+  .resource-item p {
+    color: #1f2a40;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .resource-item p:nth-child(2) {
+    color: #64748b;
+    font-weight: 400;
+    font-size: 14px;
+  }
+
+  /* Combined Card */
+  .support-card-combined {
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 60px;
+  
+    display: flex;              /* side-by-side */
+    align-items: stretch;
+    gap: 30px;                  /* space between sections */
+  }
+  
+  /* Keep chat section separate inside */
+  .chat-support-part {
+    flex: 1;
+    text-align: left;
+    border-right: 1px solid #e5e7eb;
+    padding-right: 20px;
+  }
+  .support-card-unified {
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .faq-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1f2a40;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  /* Top Chat Support */
+.chat-support-top {
+    display: flex;
+    align-items: flex-start;   /* icon top aligned with text */
+    justify-content: left;
+    gap: 15px;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .chat-support-top span {
+    font-size: 28px;
+    background: #e0f2ff;
+    color: #2563eb;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .chat-support-top p {
+    margin: 4px 0;
+    color: #1f2a40;
+    font-weight: 500;
+  }
+  
+  .chat-support-top a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  
+  .support-note {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 400;
+  }
+  
+  /* Resource Items in a Row */
+  .resources-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top:70px;
+  }
+  
+  .resources-row .resource-item {
+    flex: 1;
+    min-width: 180px;
+    text-align: center;
+  }
+  
+  .resources-row .resource-item span {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    background: #f1f3f5;
+  }
+  
+  .resources-row .resource-item p:first-child {
+    font-weight: 600;
+    color: #1f2a40;
+  }
+  
+  .resources-row .resource-item p:last-child {
+    font-size: 14px;
+    color: #64748b;
+  }
+  .chat-support-text {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .support-title {
+    font-weight: 600;
+    color: #1f2a40;
+    margin-bottom: 4px;
+  }
+  
+  .support-email {
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: none;
+    margin-bottom: 4px;
+  }
+  
+  .support-note {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 400;
+  }
+
+  .notification-dropdown-box {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    width: 300px;
+    padding: 18px;
+    z-index: 1000;
+  }
+  
+  .notification-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  
+  .notification-header h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+  
+  .notification-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-message {
+    font-size: 14px;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  
+  .notification-time {
+    font-size: 12px;
+    color: #6b7280;
+  }
+  
+  .no-notifications {
+    font-size: 14px;
+    color: #6b7280;
+    text-align: center;
+  }
