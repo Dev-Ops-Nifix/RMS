@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,9 +13,10 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  Menu,
+  X,
 } from 'lucide-react';
 import './Dashboard.css';
-
 
 const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,7 +24,13 @@ const Dashboard = () => {
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
   const [selectedClassSection, setSelectedClassSection] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
   // Sample notifications data
   const notifications = [
     { id: 1, message: 'New message from Principal about school event', time: '2 hours ago' },
@@ -88,15 +96,14 @@ const Dashboard = () => {
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
-    setNotificationDropdownOpen(false); // Close notification dropdown when opening profile
+    setNotificationDropdownOpen(false);
   };
 
   const toggleNotificationDropdown = () => {
     setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
+    setProfileDropdownOpen(false);
   };
 
-  // Handle logout confirmation
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     sessionStorage.clear();
@@ -104,23 +111,26 @@ const Dashboard = () => {
     window.location.href = "/login";
   };
 
-  // Filter logic for events and improvements based on selected class
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
+  };
   const filteredEvents = selectedClassSection
     ? selectedClassSection.events.filter(event =>
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.date.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        event.date.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     : [];
 
   const filteredImprovements = selectedClassSection
     ? selectedClassSection.improvements.filter(imp =>
-      imp.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      imp.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      imp.score.includes(searchTerm)
-    )
+        imp.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        imp.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        imp.score.includes(searchTerm)
+      )
     : [];
 
-  // Filter logic for classes based on search term
   const filteredClasses = classSections.filter(section =>
     section.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -132,41 +142,57 @@ const Dashboard = () => {
   return (
     <div className="container">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item active">
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={18} />
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
-          <User size={18} /> My Student
+          <User size={18} />
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item">
-          <User size={18} /> My Teacher
+          <User size={18} />
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
-          <FileText size={18} /> Report Card
+          <FileText size={18} />
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
-          <BarChart2 size={18} /> Performance
+          <BarChart2 size={18} />
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
-          <Trophy size={18} /> Leaderboard
+          <Trophy size={18} />
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/chat" className="sidebar-item">
-          <MessageCircle size={18} /> Chat
+          <MessageCircle size={18} />
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
-          <Calendar size={18} /> Plan
+          <Calendar size={18} />
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
-          <HelpCircle size={18} /> Support
+          <HelpCircle size={18} />
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
         <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         <header className="header">
           <h2>Dashboard</h2>
           <div className="header-right">
@@ -253,15 +279,14 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-          {/* Back Button */}
-    <div className="back-button-container">
-      <button
-        className="back-button"
-        onClick={() => setSelectedClassSection(null)}
-      >
-        <ArrowLeft size={18} />
-      </button>
-    </div>
+            <div className="back-button-container">
+              <button
+                className="back-button"
+                onClick={() => setSelectedClassSection(null)}
+              >
+                <ArrowLeft size={18} />
+              </button>
+            </div>
             {/* Welcome Card */}
             <div className="welcome-card">
               <div className="welcome-avatar">TN</div>
@@ -434,3 +459,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+

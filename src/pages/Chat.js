@@ -14,7 +14,9 @@ import {
   Paperclip,
   Smile,
   Send,
-  ArrowLeft
+  ArrowLeft,
+  Menu,
+  X,
 } from 'lucide-react';
 import './Chat.css';
 
@@ -27,12 +29,16 @@ const Chat = () => {
   const [searchTerm, setSearchTerm] = useState(""); // New state for search
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
-
-
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // New state for sidebar
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
   const fileInputRef = useRef(null);
   const chatBodyRef = useRef(null);
 
-  // Expanded sample data with classes 1 to 10 and sections A, B, C
   const classSections = [
     { name: '1-A', students: [{ id: 1, name: 'John Doe' }, { id: 2, name: 'Jane Smith' }] },
     { name: '1-B', students: [{ id: 3, name: 'Alex Brown' }, { id: 4, name: 'Chris Green' }] },
@@ -73,10 +79,12 @@ const Chat = () => {
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
+    setNotificationDropdownOpen(false);
   };
+
   const toggleNotificationDropdown = () => {
     setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
+    setProfileDropdownOpen(false);
   };
 
   const handleImageUpload = (e) => {
@@ -164,22 +172,23 @@ const Chat = () => {
     setSelectedStudent(null);
   };
 
-  // Filter classes based on search term
-  const filteredClassSections = classSections.filter(section =>
-    section.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
+  };
+
   const handleLogout = () => {
-    // Example: clear session/local storage
-    localStorage.removeItem("authToken"); // if you’re using token auth
+    localStorage.removeItem("authToken");
     sessionStorage.clear();
-  
     setShowLogoutModal(false);
-  
-    // Redirect to login page
     window.location.href = "/login";
   };
 
-  // Filter students based on search term when a class is selected
+  const filteredClassSections = classSections.filter(section =>
+    section.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const filteredStudents = selectedClassSection
     ? selectedClassSection.students.filter(student =>
         student.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -189,41 +198,61 @@ const Chat = () => {
   return (
     <div className="container">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={18} />
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
-          <User size={18} /> My Student
+          <User size={18} />
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item">
-          <User size={18} /> My Teacher
+          <User size={18} />
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
-          <FileText size={18} /> Report Card
+          <FileText size={18} />
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
-          <BarChart2 size={18} /> Performance
+          <BarChart2 size={18} />
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
-          <Trophy size={18} /> Leaderboard
+          <Trophy size={18} />
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/chat" className="sidebar-item active">
-          <MessageCircle size={18} /> Chat
+          <MessageCircle size={18} />
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
-          <Calendar size={18} /> Plan
+          <Calendar size={18} />
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
-          <HelpCircle size={18} /> Support
+          <HelpCircle size={18} />
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
-        <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+        <div
+          className="sidebar-item logout"
+          onClick={() => setShowLogoutModal(true)}
+        >
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
+        {/* Navbar */}
         <header className="header">
           <h2>Chat</h2>
           <div className="header-right">
@@ -234,11 +263,11 @@ const Chat = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-           <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
-  <Bell size={18} />
-  {notifications.length > 0 && (
-    <span className="notification-count">{notifications.length}</span>
-  )}
+            <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
+              <Bell size={18} />
+              {notifications.length > 0 && (
+                <span className="notification-count">{notifications.length}</span>
+              )}
             </div>
             <div className="user-info">
               <div
@@ -248,24 +277,24 @@ const Chat = () => {
               >
                 <User size={16} />
                 {profileDropdownOpen && (
-  <div className="profile-dropdown-box">
-    <div className="profile-header">
-      <h4>Sarah Johnson</h4>
-      <p>sarha.j@example.com</p>
-    </div>
-    <div className="profile-options">
-      <Link to="/settings" className="profile-option">
-        <span className="icon"><i className="fas fa-cog"></i></span> Settings
-      </Link>
-      <Link to="/profilesetting" className="profile-option">
-        <span className="icon"><i className="fas fa-edit"></i></span> Edit
-      </Link>
-      <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
-        <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="profile-dropdown-box">
+                    <div className="profile-header">
+                      <h4>Sarah Johnson</h4>
+                      <p>sarha.j@example.com</p>
+                    </div>
+                    <div className="profile-options">
+                      <Link to="/settings" className="profile-option">
+                        <span className="icon"><i className="fas fa-cog"></i></span> Settings
+                      </Link>
+                      <Link to="/profilesetting" className="profile-option">
+                        <span className="icon"><i className="fas fa-edit"></i></span> Edit
+                      </Link>
+                      <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
+                        <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <span className="user-name">Admin</span>
             </div>
@@ -275,12 +304,12 @@ const Chat = () => {
         {/* Chat UI */}
         <div className="chat-container">
           {!selectedClassSection && !selectedStudent ? (
-            <div className="class-grid">
+            <div className="dashboard-class-grid">
               {filteredClassSections.length > 0 ? (
                 filteredClassSections.map((section) => (
                   <div
                     key={section.name}
-                    className="class-card"
+                    className="dashboard-class-card"
                     onClick={() => selectClassSection(section)}
                   >
                     <h3>{section.name}</h3>
@@ -387,57 +416,54 @@ const Chat = () => {
                     Select a student to start chatting
                   </div>
                 )}
-               
               </div>
             </div>
           )}
-
-{showLogoutModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <div className="modal-icon">
-        <LogOut size={32} color="red" />
-      </div>
-      <h2>Are you sure you want to logout?</h2>
-      <p>You will need to log in again to access your dashboard.</p>
-      <div className="modal-actions">
-        <button
-          className="btn cancel"
-          onClick={() => setShowLogoutModal(false)} // Cancel closes modal
-        >
-          Cancel
-        </button>
-        <button
-          className="btn logout"
-          onClick={handleLogout} // Logout clears storage + redirects
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{notificationDropdownOpen && (
-  <div className="notification-dropdown-box">
-    <div className="notification-header">
-      <h4>Notifications</h4>
-    </div>
-    <div className="notification-list">
-      {notifications.length > 0 ? (
-        notifications.map(notification => (
-          <div key={notification.id} className="notification-item">
-            <p className="notification-message">{notification.message}</p>
-            <p className="notification-time">{notification.time}</p>
-          </div>
-        ))
-      ) : (
-        <p className="no-notifications">No new notifications</p>
-      )}
-    </div>
-  </div>
-)}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-icon">
+              <LogOut size={32} color="red" />
+            </div>
+            <h2>Are you sure you want to logout?</h2>
+            <p>You will need to log in again to access your dashboard.</p>
+            <div className="modal-actions">
+              <button
+                className="btn cancel"
+                onClick={() => setShowLogoutModal(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn logout" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {notificationDropdownOpen && (
+        <div className="notification-dropdown-box">
+          <div className="notification-header">
+            <h4>Notifications</h4>
+          </div>
+          <div className="notification-list">
+            {notifications.length > 0 ? (
+              notifications.map(notification => (
+                <div key={notification.id} className="notification-item">
+                  <p className="notification-message">{notification.message}</p>
+                  <p className="notification-time">{notification.time}</p>
+                </div>
+              ))
+            ) : (
+              <p className="no-notifications">No new notifications</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

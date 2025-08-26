@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -14,7 +14,8 @@ import {
   Pencil,
   Eye,
   MoreVertical,
-  X
+  X,
+  Menu,
 } from 'lucide-react';
 import './Plan.css';
 
@@ -35,32 +36,43 @@ const Plan = () => {
   const [editData, setEditData] = useState({});
   const [viewData, setViewData] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const classOptions = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-  const sectionOptions = ['A', 'B', 'C', 'D', 'E'];
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
   const notifications = [
     { id: 1, message: 'New message from Principal about school event', time: '2 hours ago' },
     { id: 2, message: 'Parent-Teacher meeting scheduled for Oct 15', time: '1 day ago' },
   ];
 
-  const toggleNotificationDropdown = () => {
-    setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
-  };
-// Handle logout confirmation
-const handleLogout = () => {
-
-  localStorage.removeItem("authToken"); 
-  sessionStorage.clear();
-
-  setShowLogoutModal(false);
-
- 
-  window.location.href = "/login";
-};
+  const classOptions = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  const sectionOptions = ['A', 'B', 'C', 'D', 'E'];
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
+    setNotificationDropdownOpen(false);
+  };
+
+  const toggleNotificationDropdown = () => {
+    setNotificationDropdownOpen(!notificationDropdownOpen);
+    setProfileDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    sessionStorage.clear();
+    setShowLogoutModal(false);
+    window.location.href = '/login';
+  };
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
   };
 
   const toggleMenu = (id) => {
@@ -99,40 +111,56 @@ const handleLogout = () => {
 
   return (
     <div className="container">
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={18} />
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
-          <User size={18} /> My Student
+          <User size={18} />
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item">
-          <User size={18} /> My Teacher
+          <User size={18} />
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
-          <FileText size={18} /> Report Card
+          <FileText size={18} />
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
-          <BarChart2 size={18} /> Performance
+          <BarChart2 size={18} />
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
-          <Trophy size={18} /> Leaderboard
+          <Trophy size={18} />
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/Chat" className="sidebar-item">
-          <MessageCircle size={18} /> Chat
+          <MessageCircle size={18} />
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item active">
-          <Calendar size={18} /> Plan
+          <Calendar size={18} />
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
-          <HelpCircle size={18} /> Support
+          <HelpCircle size={18} />
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
         <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         <header className="header">
           <h2>Plan</h2>
           <div className="header-right">
@@ -143,11 +171,30 @@ const handleLogout = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-          <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
-  <Bell size={18} />
-  {notifications.length > 0 && (
-    <span className="notification-count">{notifications.length}</span>
-  )}
+            <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
+              <Bell size={18} />
+              {notifications.length > 0 && (
+                <span className="notification-count">{notifications.length}</span>
+              )}
+              {notificationDropdownOpen && (
+                <div className="notification-dropdown-box">
+                  <div className="notification-header">
+                    <h4>Notifications</h4>
+                  </div>
+                  <div className="notification-list">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div key={notification.id} className="notification-item">
+                          <p className="notification-message">{notification.message}</p>
+                          <p className="notification-time">{notification.time}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-notifications">No new notifications</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="user-info">
               <div
@@ -157,16 +204,35 @@ const handleLogout = () => {
               >
                 <User size={16} />
                 {profileDropdownOpen && (
-                  <ul className="profile-dropdown">
-                  
-                  
-                   <li>
-                      <Link to="/profilesetting">Edit Profile</Link>
-                    </li>
-                    <li><Link to="/settings">Settings</Link></li>
-                  
-                    <li>Logout</li>
-                  </ul>
+                  <div className="profile-dropdown-box">
+                    <div className="profile-header">
+                      <h4>Sarah Johnson</h4>
+                      <p>sarha.j@example.com</p>
+                    </div>
+                    <div className="profile-options">
+                      <Link to="/settings" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-cog"></i>
+                        </span>{' '}
+                        Settings
+                      </Link>
+                      <Link to="/profilesetting" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-edit"></i>
+                        </span>{' '}
+                        Edit
+                      </Link>
+                      <div
+                        className="profile-option logout"
+                        onClick={() => setShowLogoutModal(true)}
+                      >
+                        <span className="icon">
+                          <i className="fas fa-sign-out-alt"></i>
+                        </span>{' '}
+                        Log out
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
               <span className="user-name">Admin</span>
@@ -175,9 +241,9 @@ const handleLogout = () => {
         </header>
 
         <div className="card">
-          <div className="card-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="card-header">
             <h3>Plan</h3>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className="dropdowns">
               <select
                 className="dropdown"
                 value={selectedClass}
@@ -333,8 +399,8 @@ const handleLogout = () => {
               <div className="modal-content">
                 <div className="modal-header">
                   <h3 className="modal-title">Plans</h3>
-                  <button 
-                    onClick={() => setViewData(null)} 
+                  <button
+                    onClick={() => setViewData(null)}
                     className="close-btn"
                     aria-label="Close"
                   >
@@ -379,8 +445,8 @@ const handleLogout = () => {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button 
-                    onClick={() => setViewData(null)} 
+                  <button
+                    onClick={() => setViewData(null)}
                     className="close-modal-btn"
                   >
                     Close Details
@@ -390,70 +456,68 @@ const handleLogout = () => {
             </div>
           )}
 
-{profileDropdownOpen && (
-  <div className="profile-dropdown-box">
-    <div className="profile-header">
-      <h4>Sarah Johnson</h4>
-      <p>sarha.j@example.com</p>
-    </div>
-    <div className="profile-options">
-      <Link to="/settings" className="profile-option">
-        <span className="icon"><i className="fas fa-cog"></i></span> Settings
-      </Link>
-      <Link to="/profilesetting" className="profile-option">
-        <span className="icon"><i className="fas fa-edit"></i></span> Edit
-      </Link>
-      <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
-        <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
-      </div>
-    </div>
-  </div>
-)}
+          {profileDropdownOpen && (
+            <div className="profile-dropdown-box">
+              <div className="profile-header">
+                <h4>Sarah Johnson</h4>
+                <p>sarha.j@example.com</p>
+              </div>
+              <div className="profile-options">
+                <Link to="/settings" className="profile-option">
+                  <span className="icon"><i className="fas fa-cog"></i></span> Settings
+                </Link>
+                <Link to="/profilesetting" className="profile-option">
+                  <span className="icon"><i className="fas fa-edit"></i></span> Edit
+                </Link>
+                <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
+                  <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
+                </div>
+              </div>
+            </div>
+          )}
 
-{showLogoutModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <div className="modal-icon">
-        <LogOut size={32} color="red" />
-      </div>
-      <h2>Are you sure you want to logout?</h2>
-      <p>You will need to log in again to access your dashboard.</p>
-      <div className="modal-actions">
-        <button
-          className="btn cancel"
-          onClick={() => setShowLogoutModal(false)} // Cancel closes modal
-        >
-          Cancel
-        </button>
-        <button
-          className="btn logout"
-          onClick={handleLogout} // Logout clears storage + redirects
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{notificationDropdownOpen && (
-  <div className="notification-dropdown-box">
-    <div className="notification-header">
-      <h4>Notifications</h4>
-    </div>
-    <div className="notification-list">
-      {notifications.length > 0 ? (
-        notifications.map(notification => (
-          <div key={notification.id} className="notification-item">
-            <p className="notification-message">{notification.message}</p>
-            <p className="notification-time">{notification.time}</p>
-          </div>
-        ))
-      ) : (
-        <p className="no-notifications">No new notifications</p>
-      )}
-    </div>
-  </div>
-)}
+          {showLogoutModal && (
+            <div className="modal-overlay">
+              <div className="modal">
+                <div className="modal-icon">
+                  <LogOut size={32} color="red" />
+                </div>
+                <h2>Are you sure you want to logout?</h2>
+                <p>You will need to log in again to access your dashboard.</p>
+                <div className="modal-actions">
+                  <button
+                    className="btn cancel"
+                    onClick={() => setShowLogoutModal(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button className="btn logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {notificationDropdownOpen && (
+            <div className="notification-dropdown-box">
+              <div className="notification-header">
+                <h4>Notifications</h4>
+              </div>
+              <div className="notification-list">
+                {notifications.length > 0 ? (
+                  notifications.map(notification => (
+                    <div key={notification.id} className="notification-item">
+                      <p className="notification-message">{notification.message}</p>
+                      <p className="notification-time">{notification.time}</p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-notifications">No new notifications</p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

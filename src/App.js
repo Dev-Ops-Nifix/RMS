@@ -18,6 +18,7 @@ import SwitchAccount from './pages/SwitchAccount';
 
 function App() {
   return (
+    
     <Router>
     <Routes>
       <Route path="/" element={<h1 style={{ textAlign: 'center' }}>Home Page</h1>} />

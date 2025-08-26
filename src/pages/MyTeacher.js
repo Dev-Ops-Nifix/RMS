@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -16,7 +16,8 @@ import {
   Trash,
   Plus,
   X,
-  MoreVertical
+  MoreVertical,
+  Menu,
 } from 'lucide-react';
 import './MyTeacher.css';
 
@@ -24,21 +25,29 @@ const MyTeacher = () => {
   const classOptions = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
   const sectionOptions = ['A', 'B', 'C', 'D'];
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [menuOpenId, setMenuOpenId] = useState(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // New state for sidebar
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
 
   const [teachers, setTeachers] = useState([
     { id: 'T101', teachername: 'Mr John', email: 'john@school.edu', course: 'Mathematics', class: 'IX', section: 'A' },
     { id: 'T102', teachername: 'Ms Bindhu', email: 'bindhu@school.edu', course: 'Science', class: 'I', section: 'C' },
     { id: 'T103', teachername: 'Mr Joshna', email: 'joshna@school.edu', course: 'English', class: 'III', section: 'A' },
-    { id: 'T104', teachername: 'Ms Josephina', email: 'josephina@school.edu', course: 'History', class: 'VIII', section: 'B' }
+    { id: 'T104', teachername: 'Ms Josephina', email: 'josephina@school.edu', course: 'History', class: 'VIII', section: 'B' },
   ]);
+
   const notifications = [
     { id: 1, message: 'New message from Principal about school event', time: '2 hours ago' },
     { id: 2, message: 'Parent-Teacher meeting scheduled for Oct 15', time: '1 day ago' },
   ];
-  const toggleNotificationDropdown = () => {
-    setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
-  };
+
   const [viewType, setViewType] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
@@ -47,28 +56,43 @@ const MyTeacher = () => {
   const [editData, setEditData] = useState({});
   const [viewData, setViewData] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
   const [newTeacher, setNewTeacher] = useState({
     id: '',
     teachername: '',
     email: '',
     course: '',
     class: '',
-    section: ''
+    section: '',
   });
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [menuOpenId, setMenuOpenId] = useState(null);
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
+    setNotificationDropdownOpen(false);
+  };
+
+  const toggleNotificationDropdown = () => {
+    setNotificationDropdownOpen(!notificationDropdownOpen);
+    setProfileDropdownOpen(false);
+  };
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
   };
 
   const toggleMenu = (id) => {
     setMenuOpenId(menuOpenId === id ? null : id);
   };
 
-  const filteredTeachers = teachers.filter(item => {
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    sessionStorage.clear();
+    setShowLogoutModal(false);
+    window.location.href = '/login';
+  };
+
+  const filteredTeachers = teachers.filter((item) => {
     const matchesSearch =
       item.teachername.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -90,13 +114,13 @@ const MyTeacher = () => {
   };
 
   const handleSave = (id) => {
-    setTeachers(teachers.map(teacher => (teacher.id === id ? editData : teacher)));
+    setTeachers(teachers.map((teacher) => (teacher.id === id ? editData : teacher)));
     setEditingId(null);
   };
 
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this teacher?")) {
-      setTeachers(teachers.filter(teacher => teacher.id !== id));
+    if (window.confirm('Are you sure you want to delete this teacher?')) {
+      setTeachers(teachers.filter((teacher) => teacher.id !== id));
     }
     setMenuOpenId(null);
   };
@@ -107,11 +131,18 @@ const MyTeacher = () => {
   };
 
   const handleAddTeacher = () => {
-    if (!newTeacher.id || !newTeacher.teachername || !newTeacher.email || !newTeacher.course || !newTeacher.class || !newTeacher.section) {
+    if (
+      !newTeacher.id ||
+      !newTeacher.teachername ||
+      !newTeacher.email ||
+      !newTeacher.course ||
+      !newTeacher.class ||
+      !newTeacher.section
+    ) {
       alert('Please fill all fields');
       return;
     }
-    
+
     setTeachers([...teachers, newTeacher]);
     setNewTeacher({
       id: '',
@@ -119,75 +150,71 @@ const MyTeacher = () => {
       email: '',
       course: '',
       class: '',
-      section: ''
+      section: '',
     });
     setShowAddForm(false);
   };
 
   const handleNewTeacherChange = (e) => {
     const { name, value } = e.target;
-    setNewTeacher(prev => ({
+    setNewTeacher((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-  };
-   // Handle logout confirmation
-   const handleLogout = () => {
-    // Example: clear session/local storage
-    localStorage.removeItem("authToken"); // if you’re using token auth
-    sessionStorage.clear();
-  
-    setShowLogoutModal(false);
-  
-    // Redirect to login page
-    window.location.href = "/login";
   };
 
   return (
     <div className="container">
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
           <LayoutDashboard size={18} />
-          Dashboard
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
           <User size={18} />
-          My Student
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item active">
           <User size={18} />
-          My Teacher
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
           <FileText size={18} />
-          Report Card
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
           <BarChart2 size={18} />
-          Performance
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
           <Trophy size={18} />
-          Leaderboard
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/Chat" className="sidebar-item">
           <MessageCircle size={18} />
-          Chat
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
           <Calendar size={18} />
-          Plan
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
           <HelpCircle size={18} />
-          Support
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
         <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         <header className="header">
           <h2>My Teacher</h2>
           <div className="header-right">
@@ -199,10 +226,30 @@ const MyTeacher = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
-  <Bell size={18} />
-  {notifications.length > 0 && (
-    <span className="notification-count">{notifications.length}</span>
-  )}</div>
+              <Bell size={18} />
+              {notifications.length > 0 && (
+                <span className="notification-count">{notifications.length}</span>
+              )}
+              {notificationDropdownOpen && (
+                <div className="notification-dropdown-box">
+                  <div className="notification-header">
+                    <h4>Notifications</h4>
+                  </div>
+                  <div className="notification-list">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div key={notification.id} className="notification-item">
+                          <p className="notification-message">{notification.message}</p>
+                          <p className="notification-time">{notification.time}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-notifications">No new notifications</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="user-info">
               <div
                 className="user-avatar"
@@ -211,24 +258,36 @@ const MyTeacher = () => {
               >
                 <User size={16} />
                 {profileDropdownOpen && (
-  <div className="profile-dropdown-box">
-    <div className="profile-header">
-      <h4>Sarah Johnson</h4>
-      <p>sarha.j@example.com</p>
-    </div>
-    <div className="profile-options">
-      <Link to="/settings" className="profile-option">
-        <span className="icon"><i className="fas fa-cog"></i></span> Settings
-      </Link>
-      <Link to="/profilesetting" className="profile-option">
-        <span className="icon"><i className="fas fa-edit"></i></span> Edit
-      </Link>
-      <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
-        <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="profile-dropdown-box">
+                    <div className="profile-header">
+                      <h4>Sarah Johnson</h4>
+                      <p>sarha.j@example.com</p>
+                    </div>
+                    <div className="profile-options">
+                      <Link to="/settings" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-cog"></i>
+                        </span>{' '}
+                        Settings
+                      </Link>
+                      <Link to="/profilesetting" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-edit"></i>
+                        </span>{' '}
+                        Edit
+                      </Link>
+                      <div
+                        className="profile-option logout"
+                        onClick={() => setShowLogoutModal(true)}
+                      >
+                        <span className="icon">
+                          <i className="fas fa-sign-out-alt"></i>
+                        </span>{' '}
+                        Log out
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <span className="user-name">Admin</span>
             </div>
@@ -253,10 +312,7 @@ const MyTeacher = () => {
                   <LayoutDashboard size={16} />
                 </button>
               </div>
-              <button
-                className="add-teacher-btn"
-                onClick={() => setShowAddForm(true)}
-              >
+              <button className="add-teacher-btn" onClick={() => setShowAddForm(true)}>
                 <Plus size={16} />
                 Add Teacher
               </button>
@@ -267,7 +323,9 @@ const MyTeacher = () => {
               >
                 <option value="">All Classes</option>
                 {classOptions.map((cls, index) => (
-                  <option key={index} value={cls}>Class {cls}</option>
+                  <option key={index} value={cls}>
+                    Class {cls}
+                  </option>
                 ))}
               </select>
               <select
@@ -277,7 +335,9 @@ const MyTeacher = () => {
               >
                 <option value="">All Sections</option>
                 {sectionOptions.map((sec, index) => (
-                  <option key={index} value={sec}>Section {sec}</option>
+                  <option key={index} value={sec}>
+                    Section {sec}
+                  </option>
                 ))}
               </select>
             </div>
@@ -452,9 +512,7 @@ const MyTeacher = () => {
                     </div>
                   ))
                 ) : (
-                  <p className="card-subtext">
-                    No results found
-                  </p>
+                  <p className="card-subtext">No results found</p>
                 )}
               </div>
             )}
@@ -519,7 +577,9 @@ const MyTeacher = () => {
                   >
                     <option value="">Select Class</option>
                     {classOptions.map((cls, index) => (
-                      <option key={index} value={cls}>Class {cls}</option>
+                      <option key={index} value={cls}>
+                        Class {cls}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -533,7 +593,9 @@ const MyTeacher = () => {
                   >
                     <option value="">Select Section</option>
                     {sectionOptions.map((sec, index) => (
-                      <option key={index} value={sec}>Section {sec}</option>
+                      <option key={index} value={sec}>
+                        Section {sec}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -554,11 +616,7 @@ const MyTeacher = () => {
               <div className="modal-content">
                 <div className="modal-header">
                   <h3 className="modal-title">Teacher Information</h3>
-                  <button 
-                    onClick={() => setViewData(null)} 
-                    className="close-btn"
-                    aria-label="Close"
-                  >
+                  <button onClick={() => setViewData(null)} className="close-btn" aria-label="Close">
                     <X size={20} />
                   </button>
                 </div>
@@ -589,60 +647,33 @@ const MyTeacher = () => {
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button 
-                    onClick={() => setViewData(null)} 
-                    className="close-modal-btn"
-                  >
+                  <button onClick={() => setViewData(null)} className="close-modal-btn">
                     Close Details
                   </button>
                 </div>
               </div>
             </div>
           )}
+
           {showLogoutModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <div className="modal-icon">
-        <LogOut size={32} color="red" />
-      </div>
-      <h2>Are you sure you want to logout?</h2>
-      <p>You will need to log in again to access your dashboard.</p>
-      <div className="modal-actions">
-        <button
-          className="btn cancel"
-          onClick={() => setShowLogoutModal(false)} // Cancel closes modal
-        >
-          Cancel
-        </button>
-        <button
-          className="btn logout"
-          onClick={handleLogout} // Logout clears storage + redirects
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-{notificationDropdownOpen && (
-  <div className="notification-dropdown-box">
-    <div className="notification-header">
-      <h4>Notifications</h4>
-    </div>
-    <div className="notification-list">
-      {notifications.length > 0 ? (
-        notifications.map(notification => (
-          <div key={notification.id} className="notification-item">
-            <p className="notification-message">{notification.message}</p>
-            <p className="notification-time">{notification.time}</p>
-          </div>
-        ))
-      ) : (
-        <p className="no-notifications">No new notifications</p>
-      )}
-    </div>
-  </div>
-)}
+            <div className="modal-overlay">
+              <div className="modal">
+                <div className="modal-icon">
+                  <LogOut size={32} color="red" />
+                </div>
+                <h2>Are you sure you want to logout?</h2>
+                <p>You will need to log in again to access your dashboard.</p>
+                <div className="modal-actions">
+                  <button className="btn cancel" onClick={() => setShowLogoutModal(false)}>
+                    Cancel
+                  </button>
+                  <button className="btn logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -650,4 +681,3 @@ const MyTeacher = () => {
 };
 
 export default MyTeacher;
-

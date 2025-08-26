@@ -27,13 +27,11 @@ body, html {
   flex-direction: column;
   justify-content: start;
   padding: 20px 10px;
-
 }
 
 .sidebar-item:first-child {
-  margin-top: 90px; /* Small space above Dashboard */
+  margin-top: 90px;
 }
-
 
 .sidebar-item {
   display: flex;
@@ -65,7 +63,10 @@ body, html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  height: 100vh;
+  transition: margin-left 0.3s ease;
+  padding-top: 64px; /* Match the header height */
+  overflow-y: auto; /* Ensure scrolling if needed */
 }
 
 /* Header */
@@ -77,6 +78,15 @@ body, html {
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   height: 64px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  transition: width 0.3s ease;
+}
+
+.main-content.compressed .header {
+  width: calc(100% - 60px);
 }
 
 .search {
@@ -266,19 +276,40 @@ body, html {
 }
 
 /* Dashboard Class Grid View */
+/* Dashboard Class Grid View */
 .dashboard-class-grid {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
-  padding: 30px;
+  padding: 10px 30px;
   overflow-y: auto;
-  height: calc(100vh - 64px);
-  margin-top: 90px;
-  margin-left: 30px;
-  margin-right: 30px;
+  margin-top: 0;
+  height: calc(100vh - 64px); /* Match the header height */
 }
 
+/* Sidebar Compressed */
+.sidebar.compressed {
+  width: 60px;
+  padding: 20px 5px;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  margin-bottom: 20px;
+  align-self: flex-start;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+  transform: scale(1.1);
+}
+
+/* Dashboard Class Card */
 .dashboard-class-card {
   background: #e0e7ff;
   border-radius: 10px;
@@ -317,7 +348,6 @@ body, html {
   display: flex;
   align-items: center;
   gap: 16px;
-  
   margin-left: 30px;
   margin-right: 30px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -359,7 +389,7 @@ body, html {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  margin-top: 30px;
+  margin-top: 20px;
   margin-left: 30px;
   margin-right: 30px;
 }
@@ -493,7 +523,7 @@ body, html {
   margin-top: 20px;
   margin-left: 30px;
   margin-right: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .extra-card {
@@ -691,20 +721,19 @@ body, html {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
+
 .back-button-container {
   margin: 20px 0;
 }
 
 .back-button {
-  
-margin-top: 50px;
-margin-left:25px;
+  margin-left: 25px;
   display: flex;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
-  color: #020b14; /* Adjust color to match your theme */
+  color: #020b14;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -713,7 +742,7 @@ margin-left:25px;
 }
 
 .back-button:hover {
-  color: #0056b3; /* Darker shade for hover effect */
+  color: #0056b3;
 }
 
 .back-button svg {

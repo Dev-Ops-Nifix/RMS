@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -11,14 +11,23 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  Menu,
+  X,
 } from 'lucide-react';
 import './Support.css';
 
 const Support = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
 
   const [faqs, setFaqs] = useState([
     {
@@ -59,6 +68,12 @@ const Support = () => {
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
+    setNotificationDropdownOpen(false);
+  };
+
+  const toggleNotificationDropdown = () => {
+    setNotificationDropdownOpen(!notificationDropdownOpen);
+    setProfileDropdownOpen(false);
   };
 
   const toggleFAQ = (id) => {
@@ -69,14 +84,7 @@ const Support = () => {
       }))
     );
   };
-  const toggleNotificationDropdown = () => {
-    setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
-  };
 
-  const filteredFaqs = faqs.filter((faq) =>
-    faq.question.toLowerCase().includes(searchTerm.toLowerCase())
-  );
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     sessionStorage.clear();
@@ -84,44 +92,70 @@ const Support = () => {
     window.location.href = "/login";
   };
 
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
+  };
+
+  const filteredFaqs = faqs.filter((faq) =>
+    faq.question.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="container">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={18} />
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
-          <User size={18} /> My Student
+          <User size={18} />
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item">
-          <User size={18} /> My Teacher
+          <User size={18} />
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
-          <FileText size={18} /> Report Card
+          <FileText size={18} />
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
-          <BarChart2 size={18} /> Performance
+          <BarChart2 size={18} />
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
-          <Trophy size={18} /> Leaderboard
+          <Trophy size={18} />
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/chat" className="sidebar-item">
-          <MessageCircle size={18} /> Chat
+          <MessageCircle size={18} />
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
-          <Calendar size={18} /> Plan
+          <Calendar size={18} />
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item active">
-          <HelpCircle size={18} /> Support
+          <HelpCircle size={18} />
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
         <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         <header className="header">
           <h2>Support Center</h2>
           <div className="header-right">

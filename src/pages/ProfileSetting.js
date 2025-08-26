@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -11,26 +11,53 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  Menu,
+  X,
 } from "lucide-react";
 import "./ProfileSetting.css";
 
 const ProfileSetting = () => {
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
   // Initial Values
   const initialData = {
     fullName: "Sarah Johnson",
     email: "sarahjohnson@email.com",
     mobileNumber: "+1 (555) 123-4567",
-    specializedCourse: "Mathematics", // ✅ consistent key name
+    specializedCourse: "Mathematics",
     profileImage: null,
   };
 
   const [formData, setFormData] = useState(initialData);
+  
+  // Sample notifications data
+  const notifications = [
+    { id: 1, message: 'New message from Principal about school event', time: '2 hours ago' },
+    { id: 2, message: 'Parent-Teacher meeting scheduled for Oct 15', time: '1 day ago' },
+  ];
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
+    setNotificationDropdownOpen(false);
+  };
+
+  const toggleNotificationDropdown = () => {
+    setNotificationDropdownOpen(!notificationDropdownOpen);
+    setProfileDropdownOpen(false);
+  };
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
   };
 
   // Handle Image Upload
@@ -65,42 +92,45 @@ const ProfileSetting = () => {
   return (
     <div className="container">
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
           <LayoutDashboard size={18} />
-          Dashboard
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
           <User size={18} />
-          My Student
+          {isSidebarExpanded && <span>My Student</span>}
         </Link>
         <Link to="/myteacher" className="sidebar-item">
           <User size={18} />
-          My Teacher
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item">
           <FileText size={18} />
-          Report Card
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
           <BarChart2 size={18} />
-          Performance
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
           <Trophy size={18} />
-          Leaderboard
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/chat" className="sidebar-item">
           <MessageCircle size={18} />
-          Chat
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
           <Calendar size={18} />
-          Plan
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
           <HelpCircle size={18} />
-          Support
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
 
         <div
@@ -108,20 +138,25 @@ const ProfileSetting = () => {
           onClick={() => setShowLogoutModal(true)}
         >
           <LogOut size={18} />
-          Logout
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         {/* Header */}
         <header className="header">
           <h2>Profile Settings</h2>
           <div className="header-right">
             <input type="text" className="search" placeholder="Search..." />
-            <div className="icon-wrapper">
+            <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
               <Bell size={18} />
-              <span className="notification-dot"></span>
+              {notifications.length > 0 && (
+                <span className="notification-count">{notifications.length}</span>
+              )}
             </div>
             <div className="user-info">
               <div
@@ -166,6 +201,27 @@ const ProfileSetting = () => {
             </div>
           </div>
         </header>
+
+        {/* Notification Dropdown */}
+        {notificationDropdownOpen && (
+          <div className="notification-dropdown-box">
+            <div className="notification-header">
+              <h4>Notifications</h4>
+            </div>
+            <div className="notification-list">
+              {notifications.length > 0 ? (
+                notifications.map(notification => (
+                  <div key={notification.id} className="notification-item">
+                    <p className="notification-message">{notification.message}</p>
+                    <p className="notification-time">{notification.time}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="no-notifications">No new notifications</p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Card */}
         <div className="card">
@@ -271,13 +327,13 @@ const ProfileSetting = () => {
             <div className="modal-actions">
               <button
                 className="btn cancel"
-                onClick={() => setShowLogoutModal(false)} // Cancel closes modal
+                onClick={() => setShowLogoutModal(false)}
               >
                 Cancel
               </button>
               <button
                 className="btn logout"
-                onClick={handleLogout} // Logout clears storage + redirects
+                onClick={handleLogout}
               >
                 Logout
               </button>

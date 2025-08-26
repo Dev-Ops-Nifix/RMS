@@ -1,5 +1,4 @@
-// src/pages/ReportCard.js
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -12,6 +11,8 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  Menu,
+  X,
 } from 'lucide-react';
 import './ReportCard.css';
 
@@ -23,7 +24,13 @@ const ReportCard = () => {
   const [previewURL, setPreviewURL] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] = useState(false);
-
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // New state for sidebar
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState !== null) {
+      setIsSidebarExpanded(savedSidebarState === 'false');
+    }
+  }, []);
   const quarters = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025'];
 
   const subjects = [
@@ -32,102 +39,121 @@ const ReportCard = () => {
     { subject: 'Science', grade: 'A-', teacher: 'Mrs. Patel', comments: 'Great understanding' },
     { subject: 'History', grade: 'B', teacher: 'Mr. Johnson', comments: 'Needs improvement' },
   ];
+
   const notifications = [
     { id: 1, message: 'New message from Principal about school event', time: '2 hours ago' },
     { id: 2, message: 'Parent-Teacher meeting scheduled for Oct 15', time: '1 day ago' },
   ];
+
   const filteredSubjects = subjects.filter((item) =>
     Object.values(item).some((val) =>
       val.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
+
   const toggleNotificationDropdown = () => {
     setNotificationDropdownOpen(!notificationDropdownOpen);
-    setProfileDropdownOpen(false); // Close profile dropdown when opening notification
+    setProfileDropdownOpen(false);
   };
 
   const toggleQuarterDropdown = () => {
     setQuarterDropdownOpen(!quarterDropdownOpen);
-    setProfileDropdownOpen(false); // close profile menu if open
+    setProfileDropdownOpen(false);
   };
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
-    setQuarterDropdownOpen(false); // close quarter menu if open
+    setQuarterDropdownOpen(false);
+    setNotificationDropdownOpen(false);
   };
 
   const handleSelectQuarter = (quarter) => {
     setSelectedQuarter(quarter);
     setQuarterDropdownOpen(false);
   };
-   // Handle logout confirmation
-   const handleLogout = () => {
-    // Example: clear session/local storage
-    localStorage.removeItem("authToken"); // if you’re using token auth
+
+  const toggleSidebar = () => {
+    const newState = !isSidebarExpanded;
+    setIsSidebarExpanded(newState);
+    localStorage.setItem('sidebarCollapsed', (!newState).toString());
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
     sessionStorage.clear();
-  
     setShowLogoutModal(false);
-  
-    // Redirect to login page
-    window.location.href = "/login";
+    window.location.href = '/login';
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const allowedTypes = ["image/jpeg", "image/png"];
+      const allowedTypes = ['image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
-        alert("Only JPG and PNG files are allowed!");
+        alert('Only JPG and PNG files are allowed!');
         return;
       }
       setPreviewURL(URL.createObjectURL(file));
-      console.log("File selected:", file.name);
+      console.log('File selected:', file.name);
     }
   };
 
   const handleUploadClick = () => {
-    document.getElementById("uploadInput").click();
+    document.getElementById('uploadInput').click();
   };
 
   return (
     <div className="container">
-      {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarExpanded ? 'expanded' : 'compressed'}`}>
+        <button className="sidebar-toggle" onClick={toggleSidebar}>
+          {isSidebarExpanded ? <X size={18} /> : <Menu size={18} />}
+        </button>
         <Link to="/dashboard" className="sidebar-item">
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={18} />
+          {isSidebarExpanded && <span>Dashboard</span>}
         </Link>
         <Link to="/mystudent" className="sidebar-item">
-          <User size={18} /> My Student
-        </Link>
-        <Link to="/myteacher" className="sidebar-item ">
           <User size={18} />
-          My Teacher
+          {isSidebarExpanded && <span>My Student</span>}
+        </Link>
+        <Link to="/myteacher" className="sidebar-item">
+          <User size={18} />
+          {isSidebarExpanded && <span>My Teacher</span>}
         </Link>
         <Link to="/reportcard" className="sidebar-item active">
-          <FileText size={18} /> Report Card
+          <FileText size={18} />
+          {isSidebarExpanded && <span>Report Card</span>}
         </Link>
         <Link to="/performance" className="sidebar-item">
-          <BarChart2 size={18} /> Performance
+          <BarChart2 size={18} />
+          {isSidebarExpanded && <span>Performance</span>}
         </Link>
         <Link to="/leaderboard" className="sidebar-item">
-          <Trophy size={18} /> Leaderboard
+          <Trophy size={18} />
+          {isSidebarExpanded && <span>Leaderboard</span>}
         </Link>
         <Link to="/Chat" className="sidebar-item">
-          <MessageCircle size={18} /> Chat
+          <MessageCircle size={18} />
+          {isSidebarExpanded && <span>Chat</span>}
         </Link>
         <Link to="/plan" className="sidebar-item">
-          <Calendar size={18} /> Plan
+          <Calendar size={18} />
+          {isSidebarExpanded && <span>Plan</span>}
         </Link>
         <Link to="/support" className="sidebar-item">
-          <HelpCircle size={18} /> Support
+          <HelpCircle size={18} />
+          {isSidebarExpanded && <span>Support</span>}
         </Link>
         <div className="sidebar-item logout" onClick={() => setShowLogoutModal(true)}>
-          <LogOut size={18} /> Logout
+          <LogOut size={18} />
+          {isSidebarExpanded && <span>Logout</span>}
         </div>
       </aside>
 
-      {/* Main Content */}
-      <div className="main-content">
+      <div
+        className="main-content"
+        style={{ marginLeft: isSidebarExpanded ? '220px' : '60px', transition: 'margin-left 0.3s ease' }}
+      >
         <header className="header">
           <h2>Report Card</h2>
           <div className="header-right">
@@ -139,10 +165,29 @@ const ReportCard = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="icon-wrapper" onClick={toggleNotificationDropdown}>
-  <Bell size={18} />
-  {notifications.length > 0 && (
-    <span className="notification-count">{notifications.length}</span>
-  )}
+              <Bell size={18} />
+              {notifications.length > 0 && (
+                <span className="notification-count">{notifications.length}</span>
+              )}
+              {notificationDropdownOpen && (
+                <div className="notification-dropdown-box">
+                  <div className="notification-header">
+                    <h4>Notifications</h4>
+                  </div>
+                  <div className="notification-list">
+                    {notifications.length > 0 ? (
+                      notifications.map((notification) => (
+                        <div key={notification.id} className="notification-item">
+                          <p className="notification-message">{notification.message}</p>
+                          <p className="notification-time">{notification.time}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="no-notifications">No new notifications</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="user-info">
               <div
@@ -152,24 +197,36 @@ const ReportCard = () => {
               >
                 <User size={16} />
                 {profileDropdownOpen && (
-  <div className="profile-dropdown-box">
-    <div className="profile-header">
-      <h4>Sarah Johnson</h4>
-      <p>sarha.j@example.com</p>
-    </div>
-    <div className="profile-options">
-      <Link to="/settings" className="profile-option">
-        <span className="icon"><i className="fas fa-cog"></i></span> Settings
-      </Link>
-      <Link to="/profilesetting" className="profile-option">
-        <span className="icon"><i className="fas fa-edit"></i></span> Edit
-      </Link>
-      <div className="profile-option logout" onClick={() => setShowLogoutModal(true)}>
-        <span className="icon"><i className="fas fa-sign-out-alt"></i></span> Log out
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="profile-dropdown-box">
+                    <div className="profile-header">
+                      <h4>Sarah Johnson</h4>
+                      <p>sarha.j@example.com</p>
+                    </div>
+                    <div className="profile-options">
+                      <Link to="/settings" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-cog"></i>
+                        </span>
+                        Settings
+                      </Link>
+                      <Link to="/profilesetting" className="profile-option">
+                        <span className="icon">
+                          <i className="fas fa-edit"></i>
+                        </span>
+                        Edit
+                      </Link>
+                      <div
+                        className="profile-option logout"
+                        onClick={() => setShowLogoutModal(true)}
+                      >
+                        <span className="icon">
+                          <i className="fas fa-sign-out-alt"></i>
+                        </span>
+                        Log out
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <span className="user-name">Admin</span>
             </div>
@@ -180,14 +237,14 @@ const ReportCard = () => {
           <div className="report-card-box">
             <div className="report-card-left">
               <h3 className="report-card-title">Report Card</h3>
-              <p className="student-info">Name - Grade </p>
+              <p className="student-info">Name - Grade</p>
             </div>
             <div className="report-card-actions">
               <input
                 type="file"
                 id="uploadInput"
                 accept=".jpg, .jpeg, .png"
-                style={{ display: "none" }}
+                style={{ display: 'none' }}
                 onChange={handleFileChange}
               />
               <button className="btn action-btn" onClick={handleUploadClick}>
@@ -220,7 +277,7 @@ const ReportCard = () => {
               <img
                 src={previewURL}
                 alt="Uploaded Preview"
-                style={{ maxWidth: "200px", marginTop: "10px", borderRadius: "6px" }}
+                style={{ maxWidth: '200px', marginTop: '10px', borderRadius: '6px' }}
               />
             </div>
           )}
@@ -229,7 +286,10 @@ const ReportCard = () => {
             <div className="report-quarter-header">
               <div className="title-left">
                 <svg width="20" height="20" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M20 2H8c-1.1 0-2 .9-2 2v14H4v2h16v-2h-2V4c0-1.1-.9-2-2-2m0 16H8V4h12Z" />
+                  <path
+                    fill="currentColor"
+                    d="M20 2H8c-1.1 0-2 .9-2 2v14H4v2h16v-2h-2V4c0-1.1-.9-2-2-2m0 16H8V4h12Z"
+                  />
                 </svg>
                 <span>{selectedQuarter}</span>
               </div>
@@ -255,22 +315,42 @@ const ReportCard = () => {
               <div className="card-box">
                 <h4>Student Information</h4>
                 <div className="card-grid">
-                  <div><span className="label">Name:</span> Name</div>
-                  <div><span className="label">ID:</span> ID</div>
-                  <div><span className="label">Grade:</span> Grade</div>
-                  <div><span className="label">Class:</span> Class</div>
-                  <div><span className="label">Academic Year:</span> Academic Year</div>
-                  <div><span className="label">Period:</span> Period</div>
+                  <div>
+                    <span className="label">Name:</span> Name
+                  </div>
+                  <div>
+                    <span className="label">ID:</span> ID
+                  </div>
+                  <div>
+                    <span className="label">Grade:</span> Grade
+                  </div>
+                  <div>
+                    <span className="label">Class:</span> Class
+                  </div>
+                  <div>
+                    <span className="label">Academic Year:</span> Academic Year
+                  </div>
+                  <div>
+                    <span className="label">Period:</span> Period
+                  </div>
                 </div>
               </div>
 
               <div className="card-box">
                 <h4>Summary</h4>
                 <div className="card-grid">
-                  <div><span className="label">Overall Grade:</span> Overall Grade</div>
-                  <div><span className="label">Attendance:</span> Attendance</div>
-                  <div><span className="label">Class Rank:</span> Class Rank</div>
-                  <div><span className="label">Behavior:</span> Behavior</div>
+                  <div>
+                    <span className="label">Overall Grade:</span> Overall Grade
+                  </div>
+                  <div>
+                    <span className="label">Attendance:</span> Attendance
+                  </div>
+                  <div>
+                    <span className="label">Class Rank:</span> Class Rank
+                  </div>
+                  <div>
+                    <span className="label">Behavior:</span> Behavior
+                  </div>
                 </div>
               </div>
             </div>
@@ -316,51 +396,26 @@ const ReportCard = () => {
               </div>
             </div>
           </div>
-          {showLogoutModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <div className="modal-icon">
-        <LogOut size={32} color="red" />
-      </div>
-      <h2>Are you sure you want to logout?</h2>
-      <p>You will need to log in again to access your dashboard.</p>
-      <div className="modal-actions">
-        <button
-          className="btn cancel"
-          onClick={() => setShowLogoutModal(false)} // Cancel closes modal
-        >
-          Cancel
-        </button>
-        <button
-          className="btn logout"
-          onClick={handleLogout} // Logout clears storage + redirects
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
-{notificationDropdownOpen && (
-  <div className="notification-dropdown-box">
-    <div className="notification-header">
-      <h4>Notifications</h4>
-    </div>
-    <div className="notification-list">
-      {notifications.length > 0 ? (
-        notifications.map(notification => (
-          <div key={notification.id} className="notification-item">
-            <p className="notification-message">{notification.message}</p>
-            <p className="notification-time">{notification.time}</p>
-          </div>
-        ))
-      ) : (
-        <p className="no-notifications">No new notifications</p>
-      )}
-    </div>
-  </div>
-)}
+          {showLogoutModal && (
+            <div className="modal-overlay">
+              <div className="modal">
+                <div className="modal-icon">
+                  <LogOut size={32} color="red" />
+                </div>
+                <h2>Are you sure you want to logout?</h2>
+                <p>You will need to log in again to access your dashboard.</p>
+                <div className="modal-actions">
+                  <button className="btn cancel" onClick={() => setShowLogoutModal(false)}>
+                    Cancel
+                  </button>
+                  <button className="btn logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
