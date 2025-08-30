@@ -312,10 +312,10 @@ const Settings = () => {
                                 </div>
                                 <div className="setting-item">
                                     <div>
-                                        <h4 style={{ color: '#dc2626' }}>Delete Account</h4>
+                                        <h4 style={{ color: '#FFAF00' }}>Suspend Account</h4>
                                         <p>Permanently delete your account and data</p>
                                     </div>
-                                    <button className="delete-btn" onClick={handleDelete}>Delete</button>
+                                    <button className="delete-btn" onClick={handleDelete}>Suspend</button>
                                 </div>
                             </div>
                         )}

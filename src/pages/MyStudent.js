@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   User,
@@ -63,6 +63,8 @@ const MyStudent = () => {
     section: '',
     teacher: '',
   });
+
+  const navigate = useNavigate();
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
@@ -151,6 +153,10 @@ const MyStudent = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleRowClick = (id) => {
+    navigate(`/studentdetail`);
   };
 
   return (
@@ -350,7 +356,11 @@ const MyStudent = () => {
                 <tbody>
                   {filteredSubjects.length > 0 ? (
                     filteredSubjects.map((item) => (
-                      <tr key={item.id}>
+                      <tr 
+                        key={item.id} 
+                        onClick={() => handleRowClick(item.id)} 
+                        style={{ cursor: 'pointer' }}
+                      >
                         <td>{item.id}</td>
                         <td>
                           {editingId === item.id ? (
@@ -359,6 +369,7 @@ const MyStudent = () => {
                               onChange={(e) =>
                                 setEditData({ ...editData, studentname: e.target.value })
                               }
+                              onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             item.studentname
@@ -371,6 +382,7 @@ const MyStudent = () => {
                               onChange={(e) =>
                                 setEditData({ ...editData, class: e.target.value })
                               }
+                              onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             item.class
@@ -383,6 +395,7 @@ const MyStudent = () => {
                               onChange={(e) =>
                                 setEditData({ ...editData, section: e.target.value })
                               }
+                              onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             item.section
@@ -395,12 +408,13 @@ const MyStudent = () => {
                               onChange={(e) =>
                                 setEditData({ ...editData, teacher: e.target.value })
                               }
+                              onClick={(e) => e.stopPropagation()}
                             />
                           ) : (
                             item.teacher
                           )}
                         </td>
-                        <td className="action-icons">
+                        <td className="action-icons" onClick={(e) => e.stopPropagation()}>
                           {editingId === item.id ? (
                             <>
                               <button
@@ -455,13 +469,18 @@ const MyStudent = () => {
               <div className="student-grid">
                 {filteredSubjects.length > 0 ? (
                   filteredSubjects.map((item) => (
-                    <div className="student-card" key={item.id}>
+                    <div 
+                      className="student-card" 
+                      key={item.id} 
+                      onClick={() => handleRowClick(item.id)} 
+                      style={{ cursor: 'pointer' }}
+                    >
                       <h4>{item.studentname}</h4>
                       <p>ID: {item.id}</p>
                       <p>Class: {item.class}</p>
                       <p>Section: {item.section}</p>
                       <p>Teacher: {item.teacher}</p>
-                      <div className="card-actions">
+                      <div className="card-actions" onClick={(e) => e.stopPropagation()}>
                         <div className="action-menu">
                           <MoreVertical
                             size={18}

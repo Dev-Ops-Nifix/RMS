@@ -13,7 +13,7 @@ import MyTeacher from './pages/MyTeacher';
 import ProfileSetting from './pages/ProfileSetting';
 import Settings from './pages/Settings';
 import SwitchAccount from './pages/SwitchAccount';
-
+import StudentDetail from './pages/StudentDetail';
 
 
 function App() {
@@ -35,7 +35,8 @@ function App() {
       <Route path="/profilesetting" element={<ProfileSetting/>} />
       <Route path="/settings" element={<Settings/>} />
       <Route path="/switchaccount" element={<SwitchAccount/>} />
-      
+      <Route path="/studentdetail" element={<StudentDetail/>} />
+
    
 
 
